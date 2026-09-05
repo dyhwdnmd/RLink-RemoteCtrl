@@ -1,6 +1,6 @@
 # 应用层：主界面与远程会话窗口
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 Qt 主窗口、远程会话窗口、画布、文件窗口、主题与交互控件。
 

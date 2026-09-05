@@ -1,6 +1,6 @@
 # Windows 平台能力
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 DXGI/D3D11、Windows 输入、剪贴板、文件、摄像头、MFT/FFmpeg 编解码和硬件探测。
 

@@ -283,7 +283,7 @@ bool DownloadPackage(const Options& options,
         *error = LastErrorText(L"无法初始化网络");
         goto cleanup;
     }
-    WinHttpSetTimeouts(session, 15000, 15000, 30000, 30000);
+    WinHttpSetTimeouts(session, 30000, 30000, 30000, 120000);
     connection = WinHttpConnect(session, hostName.c_str(), parts.nPort, 0);
     if (!connection) {
         *error = LastErrorText(L"无法连接下载服务器");
@@ -842,21 +842,46 @@ LRESULT CALLBACK WindowProcedure(HWND window, UINT message,
         DwmSetWindowAttribute(window, 33, &preference, sizeof(preference));
         return TRUE;
     }
-    case WM_NCHITTEST:
-        return HTCAPTION;
+    case WM_NCHITTEST: {
+        std::scoped_lock lock(g_stateMutex);
+        return g_state.failed ? HTCLIENT : HTCAPTION;
+    }
     case kStateChangedMessage:
         InvalidateRect(window, nullptr, FALSE);
         return 0;
     case WM_LBUTTONUP: {
-        std::scoped_lock lock(g_stateMutex);
-        if (g_state.failed) {
+        bool canClose = false;
+        {
+            std::scoped_lock lock(g_stateMutex);
+            canClose = g_state.failed;
+        }
+        if (canClose) {
             DestroyWindow(window);
         }
         return 0;
     }
+    case WM_KEYDOWN:
+        if (wParam == VK_ESCAPE) {
+            bool canClose = false;
+            {
+                std::scoped_lock lock(g_stateMutex);
+                canClose = g_state.finished;
+            }
+            if (canClose) {
+                DestroyWindow(window);
+            } else {
+                MessageBeep(MB_ICONINFORMATION);
+            }
+            return 0;
+        }
+        return DefWindowProcW(window, message, wParam, lParam);
     case WM_CLOSE: {
-        std::scoped_lock lock(g_stateMutex);
-        if (g_state.finished) {
+        bool canClose = false;
+        {
+            std::scoped_lock lock(g_stateMutex);
+            canClose = g_state.finished;
+        }
+        if (canClose) {
             DestroyWindow(window);
         } else {
             MessageBeep(MB_ICONINFORMATION);

@@ -1,6 +1,6 @@
 # 信令服务器
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 WSS 认证、设备注册、direct session、协作房间、持久化、限流和诊断。
 

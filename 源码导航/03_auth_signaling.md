@@ -1,6 +1,6 @@
 # 认证与客户端信令
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 Logto/DPAPI 身份、启动配置、WSS 客户端、JSON 消息与恢复。
 

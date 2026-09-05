@@ -1,6 +1,6 @@
 # 其他源码
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 未归入现有模块的源码文件。
 
@@ -74,7 +74,7 @@
 | [L771](../src/apps/update/RLinkUpdaterMain.cpp#L771) | `RunUpdate` | 定义 | `void RunUpdate(Options options)` | 执行后台循环或调度 run update 相关逻辑。 |
 | [L826](../src/apps/update/RLinkUpdaterMain.cpp#L826) | `DrawTextLine` | 定义 | `void DrawTextLine(HDC dc, const std::wstring& text, RECT bounds, HFONT font, COLORREF color, UINT format)` | 准备或呈现 draw text line 相关逻辑。 |
 | [L836](../src/apps/update/RLinkUpdaterMain.cpp#L836) | `WindowProcedure` | 定义 | `LRESULT CALLBACK WindowProcedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam)` | 实现 window procedure 对应的业务或工具逻辑。 |
-| [L928](../src/apps/update/RLinkUpdaterMain.cpp#L928) | `wWinMain` | 定义 | `int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)` | 实现 w win main 对应的业务或工具逻辑。 |
+| [L953](../src/apps/update/RLinkUpdaterMain.cpp#L953) | `wWinMain` | 定义 | `int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)` | 实现 w win main 对应的业务或工具逻辑。 |
 
 ## `src/apps/update/SoftwareUpdateController.cpp`
 

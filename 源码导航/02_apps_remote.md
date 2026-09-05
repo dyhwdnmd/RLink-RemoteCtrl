@@ -1,6 +1,6 @@
 # 应用层：会话引擎与业务控制器
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 direct/room 会话引擎、媒体路由、文件传输、远程粘贴与缓存状态机。
 

@@ -1,6 +1,6 @@
 # 核心接口与二进制协议
 
-> 自动生成于 2026-09-06，源码树 `cfeee508b14c-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
+> 自动生成于 2026-09-06，源码树 `1ae783c8db12-dirty`。请运行 `tools/Generate-SourceSymbolReference.ps1` 刷新。
 
 引擎抽象、快照、策略、控制器执行器以及输入、光标、屏幕、文件和剪贴板协议。
 
