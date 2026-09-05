@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C315B762-FE07-4C43-94F6-42473E98C380}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RemoteProcessCommon.props" />
+  </ImportGroup>
+  <ItemGroup>
+      <ClCompile Include="..\src\core\ScreenNetworkPolicy.cpp" />
+      <ClCompile Include="..\src\core\ScreenStreamPolicy.cpp" />
+      <ClCompile Include="..\src\core\SessionController.cpp" />
+      <ClCompile Include="..\src\protocol\BinaryProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\ClipboardProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\DataChannelCatalog.cpp" />
+      <ClCompile Include="..\src\protocol\FileTransferProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\RemoteInputProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\RemoteCursorProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\RoomMemberControlProtocol.cpp" />
+      <ClCompile Include="..\src\protocol\ScreenShareControlProtocol.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\core\ScreenNetworkPolicy.h" />
+    <ClInclude Include="..\src\core\ScreenStreamPolicy.h" />
+    <ClInclude Include="..\src\core\ISessionEngine.h" />
+    <ClInclude Include="..\src\core\MediaDevice.h" />
+    <ClInclude Include="..\src\core\DisplayTopology.h" />
+    <ClInclude Include="..\src\core\RoomState.h" />
+    <ClInclude Include="..\src\core\SessionDiagnostics.h" />
+      <ClInclude Include="..\src\core\SessionController.h" />
+      <ClInclude Include="..\src\protocol\BinaryProtocol.h" />
+      <ClInclude Include="..\src\protocol\ClipboardProtocol.h" />
+      <ClInclude Include="..\src\protocol\DataChannelCatalog.h" />
+      <ClInclude Include="..\src\protocol\FileTransferProtocol.h" />
+      <ClInclude Include="..\src\protocol\RemoteInputProtocol.h" />
+      <ClInclude Include="..\src\protocol\RemoteCursorProtocol.h" />
+      <ClInclude Include="..\src\protocol\RoomMemberControlProtocol.h" />
+      <ClInclude Include="..\src\protocol\ScreenShareControlProtocol.h" />
+    <ClInclude Include="..\src\signaling\ISignalingClient.h" />
+    <ClInclude Include="..\src\webrtc\IWebRtcSession.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -1,0 +1,264 @@
+QWidget#localDevicePage {
+    background: transparent;
+}
+
+QFrame#localDeviceLoginHero,
+QFrame#localLoggedInWorkspace {
+    background: transparent;
+    border: none;
+}
+
+QFrame#localDeviceLoginHero {
+    background-color: #FFFEFB;
+    border: 1px solid #DDE0E4;
+    border-radius: 20px;
+}
+QLabel#localDeviceHeroEyebrow {
+    color: #2F72F2;
+    font-size: 12px;
+    font-weight: 700;
+}
+QLabel#localDeviceHeroTitle {
+    color: #14213A;
+    font-size: 24px;
+    font-weight: 800;
+}
+QLabel#localDeviceHeroBody {
+    color: #536176;
+    font-size: 13px;
+}
+QPushButton#deviceLoginButton {
+    min-height: 46px;
+    padding: 0 22px;
+    border: 1px solid #2365E8;
+    border-radius: 12px;
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #2E79F7, stop:1 #4267ED);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+}
+QPushButton#deviceLoginButton:hover {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #246FF0, stop:1 #395CE1);
+}
+QPushButton#deviceLoginButton:pressed {
+    background: #3156CF;
+}
+QLabel#localDeviceSecureNote {
+    color: #667085;
+    font-size: 12px;
+}
+QFrame#localDeviceFeatureStrip {
+    background-color: #F8F7F3;
+    border: 1px solid #E1E3E6;
+    border-radius: 14px;
+}
+QLabel#localDeviceFeatureIcon {
+    background-color: #EEF4FF;
+    border: 1px solid #DCE7FB;
+    border-radius: 11px;
+}
+QLabel#localDeviceFeatureTitle {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 700;
+}
+QLabel#localDeviceFeatureDetail {
+    color: #667085;
+    font-size: 12px;
+}
+
+/* The signed-in hero content is intentionally hidden. Collapse its container
+   too, otherwise the two useful cards are pushed down by an empty 142px band. */
+QFrame#localHeroBand {
+    min-width: 0;
+    max-width: 16777215px;
+    min-height: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+QLabel#localHeroTitle,
+QLabel#localHeroSubtitle,
+QLabel#localSignalPill,
+QLabel#localRuntimePill,
+QLabel#localDecoderPill {
+    min-width: 0;
+    max-width: 0;
+    min-height: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: transparent;
+    font-size: 0;
+}
+
+QFrame#localIdentityPanel,
+QFrame#localAssistPanel {
+    min-height: 360px;
+    background-color: #FFFEFB;
+    border: 1px solid #DDE0E4;
+    border-radius: 18px;
+}
+QWidget#localDevicePage[themeRoot="light"] QFrame#localIdentityPanel:hover,
+QWidget#localDevicePage[themeRoot="light"] QFrame#localAssistPanel:hover {
+    background-color: #F4F7FF;
+    border-color: #AEBFDD;
+}
+QLabel#localPanelIcon {
+    background-color: #EDF4FF;
+    border: 1px solid #D9E7FF;
+    border-radius: 12px;
+}
+QLabel#localPanelTitle {
+    color: #17233B;
+    font-size: 15px;
+    font-weight: 800;
+}
+QLabel#localPanelSubtitle {
+    color: #536176;
+    font-size: 12px;
+}
+QFrame#localIdentityPanel QLabel#localPanelSubtitle {
+    min-height: 0;
+    max-height: 0;
+    color: transparent;
+    font-size: 0;
+}
+
+QFrame#localCredentialRow {
+    min-height: 58px;
+    background-color: #F8F7F3;
+    border: 1px solid #DDE0E4;
+    border-radius: 12px;
+}
+QWidget#localDevicePage[themeRoot="light"] QFrame#localCredentialRow:hover {
+    background-color: #F4F7FF;
+    border-color: #AEBFDD;
+}
+QLabel#localCredentialCaption {
+    color: #536176;
+    font-size: 12px;
+}
+QLabel#localCredentialValue {
+    color: #1C2B45;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+QLabel#localCredentialValue[verification="true"] {
+    color: #2C71F2;
+}
+QLabel#localAccountValue {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+QLabel#directAssistBadge {
+    min-width: 0;
+    max-width: 0;
+    min-height: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: transparent;
+    font-size: 0;
+}
+
+QWidget#localDevicePage QLineEdit {
+    min-height: 48px;
+    background-color: #F8F7F3;
+    border: 1px solid #DDE0E4;
+    border-radius: 12px;
+    padding: 0 14px;
+    color: #24324A;
+    placeholder-text-color: #667085;
+    selection-background-color: #CBD9FF;
+    font-size: 12px;
+}
+QWidget#localDevicePage QLineEdit:hover {
+    background-color: #FFFEFB;
+    border-color: #C9CED6;
+}
+QWidget#localDevicePage QLineEdit:focus {
+    background-color: #FFFEFB;
+    border: 2px solid #5D82F4;
+    padding: 0 13px;
+}
+QWidget#localDevicePage QLineEdit:disabled {
+    background-color: #EEEFEF;
+    border-color: #DDE0E4;
+    color: #667085;
+}
+
+QWidget#localDevicePage QPushButton#softButton {
+    min-height: 34px;
+    padding: 0 13px;
+    background-color: #F1F2F0;
+    border: 1px solid #D9DDE2;
+    border-radius: 10px;
+    color: #356CCF;
+    font-weight: 650;
+}
+QWidget#localDevicePage QPushButton#softButton:hover {
+    background-color: #E9ECEE;
+    border-color: #C9CED6;
+    color: #245DBD;
+}
+QWidget#localDevicePage QPushButton#softButton:pressed {
+    background-color: #DFEAF9;
+}
+QWidget#localDevicePage QPushButton#softButton:disabled {
+    background-color: #EEEFEF;
+    color: #667085;
+    border-color: #DDE0E4;
+}
+
+QWidget#localDevicePage QPushButton#primaryButton {
+    min-height: 48px;
+    padding: 0 22px;
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #2D7CF7, stop:1 #4168EE);
+    border: 1px solid #2466E3;
+    border-radius: 13px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 750;
+}
+QWidget#localDevicePage QPushButton#primaryButton:hover {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #2472ED, stop:1 #385DDD);
+    border-color: #1F58C9;
+}
+QWidget#localDevicePage QPushButton#primaryButton:pressed {
+    background: #3155CB;
+}
+QWidget#localDevicePage QPushButton#primaryButton:disabled {
+    background: #E2E4E5;
+    border-color: #D5D9DE;
+    color: #526079;
+}
+
+QFrame#localTrustStrip {
+    min-width: 0;
+    max-height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+QLabel#localTrustIcon,
+QLabel#localTrustTitle,
+QLabel#localTrustDetail {
+    min-height: 0;
+    max-height: 0;
+    color: transparent;
+    font-size: 0;
+    border: none;
+    background: transparent;
+}

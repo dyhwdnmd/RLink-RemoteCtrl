@@ -1,0 +1,72 @@
+# Visual Studio local state
+.vs/
+*.suo
+*.user
+LocalBuild.props
+*.VC.db
+*.VC.VC.opendb
+
+# Build output
+x64/
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.lastbuildstate
+*.log
+
+# Packaged releases
+dist/
+
+# Reproducible local FFmpeg D3D11VA build workspace. Keep only the headers,
+# runtime DLLs and license material required by RemoteC.
+/third_party/ffmpeg_d3d11va/build/
+/third_party/ffmpeg_d3d11va/home/
+/third_party/ffmpeg_d3d11va/tmp/
+/third_party/ffmpeg_d3d11va/prefix/lib/
+/third_party/ffmpeg_d3d11va/prefix/share/
+/third_party/ffmpeg_d3d11va/prefix/include/libavdevice/
+/third_party/ffmpeg_d3d11va/prefix/include/libavfilter/
+/third_party/ffmpeg_d3d11va/prefix/include/libavformat/
+/third_party/ffmpeg_d3d11va/prefix/include/libswresample/
+/third_party/ffmpeg_d3d11va/prefix/include/libswscale/
+/third_party/ffmpeg_d3d11va/prefix/bin/*
+!/third_party/ffmpeg_d3d11va/prefix/bin/
+!/third_party/ffmpeg_d3d11va/prefix/bin/avcodec-62.dll
+!/third_party/ffmpeg_d3d11va/prefix/bin/avutil-60.dll
+!/third_party/ffmpeg_d3d11va/prefix/bin/libwinpthread-1.dll
+!/third_party/ffmpeg_d3d11va/prefix/bin/libx264-165.dll
+!/third_party/ffmpeg_d3d11va/prefix/bin/libvpl.dll
+
+# Local SDK/build inputs used to reproduce the optional FFmpeg hardware
+# backends. They are fetched from the official upstream projects and are not
+# application runtime files.
+/third_party/amf/
+/third_party/nv-codec-headers/
+/third_party/onevpl/
+
+# Upstream Morphicons research checkout. The adapted C++ implementation and
+# required license are committed under src/apps/controller/ui/morph and
+# assets/ui/icons/licenses instead of embedding a nested Git repository.
+/third_party/morphicons/
+
+# Local crash dumps and debugger reports
+crash_dumps/
+
+# Local operating-system files
+Thumbs.db
+Desktop.ini
+
+# Local design and study documents are not part of the public source package.
+/架构/
+/产品开发文档.md
+/tools/ui/ImportLucideReferenceIcons.ps1
+
+# Local legacy token-based packaging helpers. These depend on private deployment
+# state and are retained only for local historical testing.
+/scripts/New-RemoteCBootstrapRenewal.ps1
+/scripts/New-RemoteCClientTestPackage.ps1

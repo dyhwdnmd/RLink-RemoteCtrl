@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{97465C44-3457-42A5-8971-BEAB9F6E0AD2}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{51F6196E-603D-43EB-BC89-3F73F5E21C73}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+      <ClCompile Include="..\src\core\ScreenNetworkPolicy.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\core\ScreenStreamPolicy.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\core\SessionController.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\BinaryProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\DataChannelCatalog.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\FileTransferProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\RemoteInputProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\RemoteCursorProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\RoomMemberControlProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+      <ClCompile Include="..\src\protocol\ScreenShareControlProtocol.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\core\ScreenNetworkPolicy.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\ScreenStreamPolicy.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\DisplayTopology.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\ISessionEngine.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\ISignalingClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\MediaDevice.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\RoomState.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\SessionDiagnostics.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\core\SessionController.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\BinaryProtocol.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\DataChannelCatalog.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\FileTransferProtocol.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\RemoteInputProtocol.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\RemoteCursorProtocol.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\RoomMemberControlProtocol.h"><Filter>Header Files</Filter></ClInclude>
+      <ClInclude Include="..\src\protocol\ScreenShareControlProtocol.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\IWebRtcSession.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

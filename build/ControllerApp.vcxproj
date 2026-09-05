@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BFE78770-4800-4D26-A715-335AE6EC888F}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <QtWidgetsApplication>true</QtWidgetsApplication>
+    <QtWebSocketsApplication>true</QtWebSocketsApplication>
+    <QtNetworkAuthApplication>true</QtNetworkAuthApplication>
+    <TargetName>RLinkAPP</TargetName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RemoteProcessCommon.props" />
+    <Import Project="QtRuntime.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\apps\remote\RemoteCProductMain.cpp" />
+    <ClCompile Include="..\src\apps\remote\RemoteCApplicationCoordinator.cpp" />
+    <ClCompile Include="..\src\apps\update\SoftwareUpdateController.cpp" />
+    <ClCompile Include="..\src\apps\controller\LoginWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\ui\RemoteCTheme.cpp" />
+    <ClCompile Include="..\src\apps\controller\ui\morph\MorphIconCore.cpp" />
+    <ClCompile Include="..\src\apps\controller\ui\morph\MorphIconButtonBinding.cpp" />
+    <ClCompile Include="..\src\apps\controller\CameraWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\ControllerMainWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\FileTransferWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\FramelessWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\RemoteCDialog.cpp" />
+    <ClCompile Include="..\src\apps\controller\RemoteCComboBox.cpp" />
+    <ClCompile Include="..\src\apps\controller\RemoteCToast.cpp" />
+    <ClCompile Include="..\src\apps\controller\RoundedPopupMenu.cpp" />
+    <ClCompile Include="..\src\apps\controller\RemoteSessionWindow.cpp" />
+    <ClCompile Include="..\src\apps\controller\RoomCameraWindow.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsInputExecutor.cpp" />
+    <ClCompile Include="$(IntDir)qrc_RemoteCResources.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\apps\remote\EncoderBenchmarkProfileCache.h" />
+    <ClInclude Include="..\src\apps\remote\RemoteCApplicationCoordinator.h" />
+    <ClInclude Include="..\src\apps\update\SoftwareUpdateController.h" />
+    <ClInclude Include="..\src\apps\remote\DirectSessionRuntimeState.h" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.h" />
+    <ClInclude Include="..\src\core\DirectSessionRequest.h" />
+    <ClInclude Include="..\src\core\ISessionEngine.h" />
+    <ClInclude Include="..\src\apps\controller\CameraWindow.h" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.h" />
+    <ClInclude Include="..\src\apps\controller\LoginWindow.h" />
+    <ClInclude Include="..\src\apps\controller\ui\RemoteCTheme.h" />
+    <ClInclude Include="..\src\apps\controller\ui\morph\MorphIconCore.h" />
+    <ClInclude Include="..\src\apps\controller\ui\morph\MorphIconButtonBinding.h" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.AuxiliaryWindows.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Clipboard.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DecoderBenchmark.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.EncoderBenchmark.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsInbound.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsInput.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsOutbound.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsPeers.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsPublish.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.EngineMedia.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Lifecycle.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Theme.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.MediaMenu.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.NavigationRecent.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomApprovals.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomMemberActions.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomUi.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Session.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotConnectivity.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotCopy.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotDebug.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotLocal.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotPreflight.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotWindows.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiConnections.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiDeviceRecent.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiDiagnostics.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiSettings.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiShellRoom.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.WindowLifecycle.inc" />
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SoftwareUpdate.inc" />
+    <ClInclude Include="..\src\apps\controller\FileTransferWindow.h" />
+    <ClInclude Include="..\src\apps\controller\FramelessWindow.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteCDialog.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteCComboBox.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteCToast.h" />
+    <ClInclude Include="..\src\apps\controller\D3D11VideoSurface.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Input.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Public.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Rendering.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.State.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteCursorOverlay.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteInputDispatcher.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionActionTile.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionNetworkIndicator.inc" />
+    <ClInclude Include="..\src\apps\controller\RoundedPopupMenu.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionBinding.h" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Helpers.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Controls.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Diagnostics.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.DisplayMenu.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Layout.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Lifecycle.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.MediaMenu.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.MediaSelection.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.SessionState.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Ui.inc" />
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.WindowActions.inc" />
+    <ClInclude Include="..\src\apps\controller\RoomCameraWindow.h" />
+    <ClInclude Include="..\src\platform\win\WindowsInputExecutor.h" />
+    <ClInclude Include="..\src\signaling\ISignalingClient.h" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RemoteCResources.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="..\src\apps\remote\RemoteCApp.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\assets\branding\RemoteCApp.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="RemoteCore.vcxproj">
+      <Project>{C315B762-FE07-4C43-94F6-42473E98C380}</Project>
+    </ProjectReference>
+    <ProjectReference Include="WebRtcTransport.vcxproj">
+      <Project>{D24E7C40-8824-479B-AC12-416D1523FCE9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="SignalingTransport.vcxproj">
+      <Project>{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RemoteSessionEngine.vcxproj">
+      <Project>{6A5419AB-D414-4DC4-91D7-1680D9AF2A93}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RemoteAuth.vcxproj">
+      <Project>{3C9A2C0B-86EA-45E8-8D02-17C25E8F913B}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WebRtcSourceDir)\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y &quot;$(FfmpegD3D11VaDir)\bin\avutil-60.dll&quot; &quot;$(OutDir)avutil-60.dll&quot;
+copy /Y &quot;$(FfmpegD3D11VaDir)\bin\avcodec-62.dll&quot; &quot;$(OutDir)avcodec-62.dll&quot;
+copy /Y &quot;$(FfmpegD3D11VaDir)\bin\libwinpthread-1.dll&quot; &quot;$(OutDir)libwinpthread-1.dll&quot;
+copy /Y &quot;$(FfmpegD3D11VaDir)\bin\libx264-165.dll&quot; &quot;$(OutDir)libx264-165.dll&quot;
+copy /Y &quot;$(FfmpegD3D11VaDir)\bin\libvpl.dll&quot; &quot;$(OutDir)libvpl.dll&quot;</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="GenerateRemoteCResources" BeforeTargets="ClCompile">
+    <MakeDir Directories="$(IntDir)" />
+    <Exec Command="&quot;$(QtInstallDir)\bin\rcc.exe&quot; --name RemoteCResources --output &quot;$(IntDir)qrc_RemoteCResources.cpp&quot; &quot;$(ProjectDir)RemoteCResources.qrc&quot;" />
+  </Target>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+</Project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copy to LocalBuild.props and change only paths that differ locally.
+     LocalBuild.props is intentionally ignored and must not contain tokens. -->
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <WebRtcSourceDir>E:\webrtc_src\src</WebRtcSourceDir>
+    <WebRtcOutputDir>$(WebRtcSourceDir)\out\ReleaseMD</WebRtcOutputDir>
+    <QtInstallDir>E:\Qt6\6.11.1\msvc2022_64</QtInstallDir>
+    <!-- Reserved for a Qt OpenSSL backend or packaging customization. -->
+    <OpenSslRootDir>C:\OpenSSL-Win64</OpenSslRootDir>
+  </PropertyGroup>
+</Project>

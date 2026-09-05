@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <QtWebSocketsApplication>true</QtWebSocketsApplication>
+    <TargetName>SignalingTransport</TargetName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="QtRuntime.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;WIN32_LEAN_AND_MEAN;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalOptions>/utf-8 /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\signaling\SignalingJsonCodec.cpp" />
+    <ClCompile Include="..\src\signaling\QtWebSocketSignalingClient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\signaling\ISignalingClient.h" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Connection.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Dispatch.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.h" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.LegacySession.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Lifecycle.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Negotiation.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.PairTransport.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Recovery.inc" />
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.RoomCommands.inc" />
+    <ClInclude Include="..\src\signaling\SignalingJsonCodec.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

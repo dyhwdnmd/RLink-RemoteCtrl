@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{60D81B50-1D7D-4204-8FDB-B56173C8AF3D}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{F5158DC3-E79C-4654-8BEF-67DD38892FBE}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\signaling\SignalingJsonCodec.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\signaling\QtWebSocketSignalingClient.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\signaling\ISignalingClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Connection.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Dispatch.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.LegacySession.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Negotiation.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.PairTransport.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.Recovery.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.RoomCommands.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\SignalingJsonCodec.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

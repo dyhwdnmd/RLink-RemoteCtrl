@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="LocalBuild.props" Condition="Exists('LocalBuild.props')" />
+  <PropertyGroup>
+    <QtInstallDir Condition="'$(QtInstallDir)'==''">E:\Qt6\6.11.1\msvc2022_64</QtInstallDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(QtInstallDir)\include;$(QtInstallDir)\include\QtCore;$(QtInstallDir)\include\QtGui;$(QtInstallDir)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(QtGuiApplication)'=='true'">$(QtInstallDir)\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(QtWebSocketsApplication)'=='true'">$(QtInstallDir)\include\QtNetwork;$(QtInstallDir)\include\QtWebSockets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(QtNetworkAuthApplication)'=='true'">$(QtInstallDir)\include\QtNetworkAuth;$(QtInstallDir)\include\QtNetwork;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(QtHttpServerApplication)'=='true'">$(QtInstallDir)\include\QtHttpServer;$(QtInstallDir)\include\QtNetwork;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(QtSqlApplication)'=='true'">$(QtInstallDir)\include\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(QtInstallDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(QtWidgetsApplication)'=='true'">Qt6Widgets.lib;Qt6Gui.lib;Qt6Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtGuiApplication)'=='true'">Qt6Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtWidgetsApplication)'!='true'">Qt6Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtWebSocketsApplication)'=='true'">Qt6WebSockets.lib;Qt6Network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtNetworkAuthApplication)'=='true'">Qt6NetworkAuth.lib;Qt6Network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtHttpServerApplication)'=='true'">Qt6HttpServer.lib;Qt6Network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(QtSqlApplication)'=='true'">Qt6Sql.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Core.dll" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Gui.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Gui.dll" Condition="'$(QtGuiApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Widgets.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Svg.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Network.dll" Condition="'$(QtWebSocketsApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6WebSockets.dll" Condition="'$(QtWebSocketsApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6NetworkAuth.dll" Condition="'$(QtNetworkAuthApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6HttpServer.dll" Condition="'$(QtHttpServerApplication)'=='true'" />
+    <QtRuntimeDll Include="$(QtInstallDir)\bin\Qt6Sql.dll" Condition="'$(QtSqlApplication)'=='true'" />
+    <QtPlatformPlugin Include="$(QtInstallDir)\plugins\platforms\qwindows.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtIconEnginePlugin Include="$(QtInstallDir)\plugins\iconengines\qsvgicon.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtImageFormatPlugin Include="$(QtInstallDir)\plugins\imageformats\qsvg.dll" Condition="'$(QtWidgetsApplication)'=='true'" />
+    <QtTlsPlugin Include="$(QtInstallDir)\plugins\tls\qschannelbackend.dll" Condition="'$(QtWebSocketsApplication)'=='true'" />
+    <QtSqlDriverPlugin Include="$(QtInstallDir)\plugins\sqldrivers\qsqlite.dll" Condition="'$(QtSqlApplication)'=='true'" />
+    <RemoteCFontLicense Include="$(MSBuildThisFileDirectory)..\assets\fonts\licenses\Inter-OFL.txt" />
+    <RemoteCIconLicense Include="$(MSBuildThisFileDirectory)..\assets\ui\icons\licenses\Lucide-LICENSE.txt" />
+    <RemoteCIconLicense Include="$(MSBuildThisFileDirectory)..\assets\ui\icons\licenses\Morphicons-LICENSE.txt" />
+  </ItemGroup>
+  <Target Name="CopyQtRuntime" AfterTargets="Build">
+    <Copy SourceFiles="@(QtRuntimeDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <MakeDir Directories="$(OutDir)platforms" Condition="'@(QtPlatformPlugin)'!=''" />
+    <Copy SourceFiles="@(QtPlatformPlugin)" DestinationFolder="$(OutDir)platforms" SkipUnchangedFiles="true" Condition="'@(QtPlatformPlugin)'!=''" />
+    <MakeDir Directories="$(OutDir)iconengines" Condition="'@(QtIconEnginePlugin)'!=''" />
+    <Copy SourceFiles="@(QtIconEnginePlugin)" DestinationFolder="$(OutDir)iconengines" SkipUnchangedFiles="true" Condition="'@(QtIconEnginePlugin)'!=''" />
+    <MakeDir Directories="$(OutDir)imageformats" Condition="'@(QtImageFormatPlugin)'!=''" />
+    <Copy SourceFiles="@(QtImageFormatPlugin)" DestinationFolder="$(OutDir)imageformats" SkipUnchangedFiles="true" Condition="'@(QtImageFormatPlugin)'!=''" />
+    <MakeDir Directories="$(OutDir)tls" Condition="'@(QtTlsPlugin)'!=''" />
+    <Copy SourceFiles="@(QtTlsPlugin)" DestinationFolder="$(OutDir)tls" SkipUnchangedFiles="true" Condition="'@(QtTlsPlugin)'!=''" />
+    <MakeDir Directories="$(OutDir)sqldrivers" Condition="'@(QtSqlDriverPlugin)'!=''" />
+    <Copy SourceFiles="@(QtSqlDriverPlugin)" DestinationFolder="$(OutDir)sqldrivers" SkipUnchangedFiles="true" Condition="'@(QtSqlDriverPlugin)'!=''" />
+    <MakeDir Directories="$(OutDir)licenses\fonts" Condition="'@(RemoteCFontLicense)'!=''" />
+    <Copy SourceFiles="@(RemoteCFontLicense)" DestinationFolder="$(OutDir)licenses\fonts" SkipUnchangedFiles="true" Condition="'@(RemoteCFontLicense)'!=''" />
+    <MakeDir Directories="$(OutDir)licenses\icons" Condition="'@(RemoteCIconLicense)'!=''" />
+    <Copy SourceFiles="@(RemoteCIconLicense)" DestinationFolder="$(OutDir)licenses\icons" SkipUnchangedFiles="true" Condition="'@(RemoteCIconLicense)'!=''" />
+  </Target>
+</Project>

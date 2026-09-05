@@ -1,0 +1,118 @@
+QWidget#recentConnectionsPage {
+    background: transparent;
+}
+QLabel#recentSectionTitle {
+    color: #1D2A42;
+    font-size: 15px;
+    font-weight: 800;
+}
+QLabel#recentLimitPill {
+    background: #EEF3FA;
+    border: 1px solid #DFE7F2;
+    border-radius: 10px;
+    color: #536176;
+    font-size: 10px;
+    font-weight: 650;
+    padding: 3px 9px;
+}
+QFrame#recentEmptyState {
+    background: #FAFAF7;
+    border: 1px dashed #D7DBE0;
+    border-radius: 18px;
+}
+QLabel#recentEmptyIcon {
+    background: #EEF4FF;
+    border: 1px solid #DDE8FC;
+    border-radius: 13px;
+}
+QLabel#recentEmptyTitle {
+    color: #344054;
+    font-size: 14px;
+    font-weight: 750;
+}
+QLabel#recentEmptyHint {
+    color: #667085;
+    font-size: 11px;
+}
+QLabel#recentDeviceIcon,
+QLabel#recentRoomIcon {
+    background: #EEF4FF;
+    border: 1px solid #DDE8FC;
+    border-radius: 12px;
+}
+QLabel#recentRoomIcon {
+    background: #F2EEFF;
+    border-color: #E5DCF9;
+}
+QLabel#recentAvailabilityPill {
+    min-width: 92px;
+    padding: 4px 9px;
+    background: #F1F2F0;
+    border: 1px solid #DDE0E4;
+    border-radius: 10px;
+}
+QLabel#recentAvailabilityPill[availabilityTone="available"] {
+    background: #EAF8F1;
+    border-color: #CFEBDC;
+    color: #168A5B;
+}
+QLabel#recentAvailabilityPill[availabilityTone="warning"] {
+    background: #FFF7E8;
+    border-color: #F2D9A6;
+    color: #A66B12;
+}
+QLabel#recentAvailabilityPill[availabilityTone="closed"] {
+    color: #7F8DA3;
+}
+QLabel#recentAvailabilityPill[availabilityTone="checking"] {
+    color: #667085;
+}
+QWidget#recentConnectionsPage QFrame[card="true"] {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #FFFEFB, stop:1 #FAFAF7);
+    border: 1px solid #DDE0E4;
+    border-radius: 16px;
+}
+QWidget#recentConnectionsPage[themeRoot="light"] QFrame[card="true"]:hover {
+    border-color: #AEBFDD;
+    background: #F4F7FF;
+}
+QWidget#recentConnectionsPage QPushButton#primaryButton {
+    min-height: 40px;
+    min-width: 132px;
+    padding: 0 18px;
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #3378F6, stop:1 #5365F5);
+    border: 1px solid #2C67DF;
+    border-radius: 12px;
+    color: #FFFFFF;
+    font-weight: 750;
+}
+QWidget#recentConnectionsPage QPushButton#primaryButton:hover {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #2E70ED, stop:1 #485AE9);
+    border-color: #285DCC;
+}
+QWidget#recentConnectionsPage QPushButton#primaryButton:pressed {
+    background: #3654D4;
+}
+QWidget#recentConnectionsPage QPushButton#primaryButton:disabled {
+    background: #E2E4E5;
+    border-color: #D5D9DE;
+    color: #5F6B7D;
+}
+QWidget#recentConnectionsPage QPushButton#softButton {
+    min-height: 38px;
+    padding: 0 15px;
+    background: #F1F2F0;
+    border: 1px solid #D9DDE2;
+    border-radius: 11px;
+    color: #4F5D72;
+    font-weight: 650;
+}
+QWidget#recentConnectionsPage QPushButton#softButton:hover {
+    background: #E9ECEE;
+    border-color: #C9CED6;
+}
+QWidget#recentConnectionsPage QPushButton#softButton:disabled {
+    background: #EEEFEF;
+    border-color: #DDE0E4;
+    color: #667085;
+}

@@ -1,0 +1,50 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RLink", "ControllerApp.vcxproj", "{BFE78770-4800-4D26-A715-335AE6EC888F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteAuth", "RemoteAuth.vcxproj", "{3C9A2C0B-86EA-45E8-8D02-17C25E8F913B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteCore", "RemoteCore.vcxproj", "{C315B762-FE07-4C43-94F6-42473E98C380}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebRtcTransport", "WebRtcTransport.vcxproj", "{D24E7C40-8824-479B-AC12-416D1523FCE9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SignalingTransport", "SignalingTransport.vcxproj", "{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteSessionEngine", "RemoteSessionEngine.vcxproj", "{6A5419AB-D414-4DC4-91D7-1680D9AF2A93}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RLinkSignalServer", "SignalServer.vcxproj", "{427B7F79-EE7C-45E8-A6D2-8AB7BF29A20F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RLinkUpdater", "RLinkUpdater.vcxproj", "{74C1C502-3E2B-44F7-B8A0-F408B99CC4F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFE78770-4800-4D26-A715-335AE6EC888F}.Release|x64.ActiveCfg = Release|x64
+		{BFE78770-4800-4D26-A715-335AE6EC888F}.Release|x64.Build.0 = Release|x64
+		{3C9A2C0B-86EA-45E8-8D02-17C25E8F913B}.Release|x64.ActiveCfg = Release|x64
+		{3C9A2C0B-86EA-45E8-8D02-17C25E8F913B}.Release|x64.Build.0 = Release|x64
+		{C315B762-FE07-4C43-94F6-42473E98C380}.Release|x64.ActiveCfg = Release|x64
+		{C315B762-FE07-4C43-94F6-42473E98C380}.Release|x64.Build.0 = Release|x64
+		{D24E7C40-8824-479B-AC12-416D1523FCE9}.Release|x64.ActiveCfg = Release|x64
+		{D24E7C40-8824-479B-AC12-416D1523FCE9}.Release|x64.Build.0 = Release|x64
+		{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}.Release|x64.ActiveCfg = Release|x64
+		{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}.Release|x64.Build.0 = Release|x64
+		{6A5419AB-D414-4DC4-91D7-1680D9AF2A93}.Release|x64.ActiveCfg = Release|x64
+		{6A5419AB-D414-4DC4-91D7-1680D9AF2A93}.Release|x64.Build.0 = Release|x64
+		{427B7F79-EE7C-45E8-A6D2-8AB7BF29A20F}.Release|x64.ActiveCfg = Release|x64
+		{427B7F79-EE7C-45E8-A6D2-8AB7BF29A20F}.Release|x64.Build.0 = Release|x64
+		{74C1C502-3E2B-44F7-B8A0-F408B99CC4F7}.Release|x64.ActiveCfg = Release|x64
+		{74C1C502-3E2B-44F7-B8A0-F408B99CC4F7}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DD57AD2-6E84-43A7-9953-3D80B5A5D88D}
+	EndGlobalSection
+EndGlobal

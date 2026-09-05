@@ -1,0 +1,21 @@
+QPushButton, QToolButton, QLineEdit, QComboBox {
+    outline: none;
+}
+QPushButton {
+    min-height: 38px;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-weight: 600;
+}
+QLineEdit, QComboBox {
+    min-height: 40px;
+    border-radius: 10px;
+}
+QToolButton#profileUpdateButton {
+    background: #E97F5D;
+    border: none;
+    border-radius: 15px;
+    padding: 5px;
+}
+QToolButton#profileUpdateButton:hover { background: #F08A66; }
+QToolButton#profileUpdateButton:pressed { background: #D86E4D; }

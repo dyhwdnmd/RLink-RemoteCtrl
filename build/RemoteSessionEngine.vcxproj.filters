@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{2D6A4117-0F6A-4D6C-9B3E-A4EBB50315C1}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{83F5FB41-A728-4B77-A3B7-EF2EB780340C}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\apps\remote\FileTransferController.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\remote\ClipboardCacheManager.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\remote\FileTransferStorage.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\remote\InProcessSessionEngine.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsFileTransferService.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsCursorMonitor.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\ClipboardCacheManager.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Chunking.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Commands.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Receive.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Reliability.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Send.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Worker.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\FileTransferStorage.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\DirectSessionRuntimeState.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\DirectSessionRequest.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngineInternal.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Audio.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Camera.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectBridge.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectData.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectScreen.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectCallbacks.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectSession.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.LeaseCallbacks.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.MediaDevices.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.MediaHooks.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RemoteControl.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RemoteCursor.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Room.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomCallbacks.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairChannels.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairControlDispatch.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairDispatchPreamble.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairInputDispatch.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairLifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairScreenDispatch.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairState.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RuntimeHelpers.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.ScreenPolicyFile.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.ScreenShare.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.VideoSlots.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsFileTransferService.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsCursorMonitor.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

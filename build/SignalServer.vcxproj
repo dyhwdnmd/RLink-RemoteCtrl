@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{427B7F79-EE7C-45E8-A6D2-8AB7BF29A20F}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <QtWebSocketsApplication>true</QtWebSocketsApplication>
+    <QtHttpServerApplication>true</QtHttpServerApplication>
+    <QtSqlApplication>true</QtSqlApplication>
+    <TargetName>RemoteCSignalServer</TargetName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="QtRuntime.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;WIN32_LEAN_AND_MEAN;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalOptions>/utf-8 /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\server\auth\LogtoUserInfoClient.cpp" />
+    <ClCompile Include="..\src\server\auth\LogtoManagementClient.cpp" />
+    <ClCompile Include="..\src\server\auth\LogtoWebhookServer.cpp" />
+    <ClCompile Include="..\src\server\persistence\IdentityStore.cpp" />
+    <ClCompile Include="..\src\server\signaling\AccessTokenService.cpp" />
+    <ClCompile Include="..\src\server\signaling\SignalServer.cpp" />
+    <ClCompile Include="..\src\server\signaling\SignalServerSupport.cpp" />
+    <ClCompile Include="..\src\server\signaling\SignalServerMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\server\auth\AuthTypes.h" />
+    <ClInclude Include="..\src\server\auth\LogtoUserInfoClient.h" />
+    <ClInclude Include="..\src\server\auth\LogtoManagementClient.h" />
+    <ClInclude Include="..\src\server\auth\LogtoWebhookServer.h" />
+    <ClInclude Include="..\src\server\persistence\IdentityStore.h" />
+    <ClInclude Include="..\src\server\signaling\AccessTokenService.h" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.Authentication.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.AccountManagement.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.h" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.Connection.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.LegacySession.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.Lifecycle.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.Recovery.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.Relay.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomLeases.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomMembership.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomPairs.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomState.inc" />
+    <ClInclude Include="..\src\server\signaling\SignalServerSupport.h" />
+    <ClInclude Include="..\src\server\signaling\SlidingWindowRateLimiter.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

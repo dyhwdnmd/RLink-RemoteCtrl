@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{16CA61BB-0B80-4360-9CED-65D75A553CB1}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{84B3B873-D370-40F3-96A6-4B4D24887B71}</UniqueIdentifier></Filter>
+    <Filter Include="Resource Files"><UniqueIdentifier>{7D558D10-9478-4A8F-A835-537A47A2C152}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\apps\remote\RemoteCProductMain.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\remote\RemoteCApplicationCoordinator.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\LoginWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\ui\RemoteCTheme.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\ui\morph\MorphIconCore.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\ui\morph\MorphIconButtonBinding.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\CameraWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\ControllerMainWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\FileTransferWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\FramelessWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RemoteCDialog.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RemoteCComboBox.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RemoteCToast.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RoundedPopupMenu.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RemoteSessionWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\RoomCameraWindow.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\apps\controller\ControllerProductMain.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsInputExecutor.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\apps\remote\EncoderBenchmarkProfileCache.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\RemoteCApplicationCoordinator.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\DirectSessionRuntimeState.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\DirectSessionRequest.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\core\ISessionEngine.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\ISignalingClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\signaling\QtWebSocketSignalingClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\CameraWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\LoginWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ui\RemoteCTheme.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ui\morph\MorphIconCore.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ui\morph\MorphIconButtonBinding.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\FileTransferWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\FramelessWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.AuxiliaryWindows.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DecoderBenchmark.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsInbound.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsInput.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsOutbound.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsPeers.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.DiagnosticsPublish.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.EngineMedia.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Theme.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.MediaMenu.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.NavigationRecent.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomApprovals.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomMemberActions.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.RoomUi.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.Session.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotConnectivity.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotCopy.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotDebug.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotLocal.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotPreflight.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.SnapshotWindows.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiConnections.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiDeviceRecent.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiDiagnostics.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiSettings.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.UiShellRoom.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\ControllerMainWindow.WindowLifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\D3D11VideoSurface.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Input.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Public.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.Rendering.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteDesktopCanvas.State.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteCursorOverlay.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteCDialog.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteCComboBox.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteCToast.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteInputDispatcher.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionActionTile.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionNetworkIndicator.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RoundedPopupMenu.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionBinding.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Helpers.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Controls.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Diagnostics.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.DisplayMenu.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Layout.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.MediaMenu.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.MediaSelection.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.SessionState.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.Ui.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RemoteSessionWindow.WindowActions.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\apps\controller\RoomCameraWindow.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsInputExecutor.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RemoteCResources.qrc"><Filter>Resource Files</Filter></None>
+  </ItemGroup>
+</Project>

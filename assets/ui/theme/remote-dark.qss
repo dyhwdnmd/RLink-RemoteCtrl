@@ -1,0 +1,23 @@
+QMainWindow, QWidget[themeRoot="remoteDark"] {
+    background: #0B111B;
+    color: #F4F7FB;
+}
+QFrame[card="true"] {
+    background: #121C2B;
+    border: 1px solid #2A394F;
+    border-radius: 12px;
+}
+QLabel[muted="true"] { color: #9AA8BB; }
+QPushButton[variant="remote"] {
+    background: #182538;
+    border: 1px solid #344962;
+    color: #F4F7FB;
+}
+QPushButton[variant="remote"]:hover { background: #213149; border-color: #465F7D; }
+QPushButton[variant="remote"]:pressed { background: #142033; border-color: #3A506B; }
+QPushButton[variant="danger"] {
+    background: #3A2027;
+    border: 1px solid #6A3541;
+    color: #FF9AA6;
+}
+QPushButton[variant="danger"]:hover { background: #4A2730; border-color: #874653; }

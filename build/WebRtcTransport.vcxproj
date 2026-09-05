@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D24E7C40-8824-479B-AC12-416D1523FCE9}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RemoteProcessCommon.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WebRtcSourceDir)\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\platform\win\D3D11DesktopFrameBuffer.cpp" />
+    <ClCompile Include="..\src\platform\win\DesktopBgraFrameBuffer.cpp" />
+    <ClCompile Include="..\src\platform\win\D3D11NativeFrameBuffer.cpp" />
+    <ClCompile Include="..\src\platform\win\DxgiNativeDesktopCapturer.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsDesktopCaptureSource.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsDisplayTopology.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsHardwareFingerprint.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsCameraCaptureSource.cpp" />
+    <ClCompile Include="..\src\platform\win\MfH264EncoderCapabilityProbe.cpp" />
+    <ClCompile Include="..\src\platform\win\MfD3D11H264Encoder.cpp" />
+    <ClCompile Include="..\src\platform\win\MfD3D11H264EncoderFactory.cpp" />
+    <ClCompile Include="..\src\platform\win\MfH264EncoderSelfTest.cpp" />
+    <ClCompile Include="..\src\platform\win\MfD3D11H264Decoder.cpp" />
+    <ClCompile Include="..\src\platform\win\FfmpegD3D11H264Decoder.cpp" />
+    <ClCompile Include="..\src\platform\win\FfmpegHardwareH264Encoder.cpp" />
+    <ClCompile Include="..\src\platform\win\FfmpegHardwareH264EncoderFactory.cpp" />
+    <ClCompile Include="..\src\platform\win\FfmpegX264H264Encoder.cpp" />
+    <ClCompile Include="..\src\platform\win\FfmpegX264H264EncoderFactory.cpp" />
+    <ClCompile Include="..\src\platform\win\QualityOpenH264Encoder.cpp" />
+    <ClCompile Include="..\src\platform\win\H264EncoderBenchmark.cpp" />
+    <ClCompile Include="..\src\platform\win\MfD3D11H264DecoderBenchmark.cpp" />
+    <ClCompile Include="..\src\platform\win\MfD3D11H264DecoderFactory.cpp" />
+    <ClCompile Include="..\src\webrtc\LibWebRtcSession.cpp" />
+    <ClCompile Include="..\src\webrtc\PeerConnectionStatsCollector.cpp" />
+    <ClCompile Include="..\src\webrtc\WebRtcRuntime.cpp" />
+    <ClCompile Include="..\src\webrtc\WindowsPreferredVideoDecoderFactory.cpp" />
+    <ClCompile Include="..\src\webrtc\WindowsPreferredVideoEncoderFactory.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\platform\win\D3D11DesktopFrameBuffer.h" />
+    <ClInclude Include="..\src\platform\win\DesktopBgraFrameBuffer.h" />
+    <ClInclude Include="..\src\platform\win\D3D11NativeFrameBuffer.h" />
+    <ClInclude Include="..\src\platform\win\DxgiNativeDesktopCapturer.h" />
+    <ClInclude Include="..\src\platform\win\WindowsDesktopCaptureSource.h" />
+    <ClInclude Include="..\src\platform\win\WindowsDisplayTopology.h" />
+    <ClInclude Include="..\src\platform\win\WindowsHardwareFingerprint.h" />
+    <ClInclude Include="..\src\platform\win\WindowsCameraCaptureSource.h" />
+    <ClInclude Include="..\src\platform\win\MfH264EncoderCapabilityProbe.h" />
+    <ClInclude Include="..\src\platform\win\MfD3D11H264Encoder.h" />
+    <ClInclude Include="..\src\platform\win\MfD3D11H264EncoderFactory.h" />
+    <ClInclude Include="..\src\platform\win\MfH264EncoderSelfTest.h" />
+    <ClInclude Include="..\src\platform\win\MfD3D11H264Decoder.h" />
+    <ClInclude Include="..\src\platform\win\FfmpegD3D11H264Decoder.h" />
+    <ClInclude Include="..\src\platform\win\FfmpegHardwareH264Encoder.h" />
+    <ClInclude Include="..\src\platform\win\FfmpegHardwareH264EncoderFactory.h" />
+    <ClInclude Include="..\src\platform\win\FfmpegX264H264Encoder.h" />
+    <ClInclude Include="..\src\platform\win\FfmpegX264H264EncoderFactory.h" />
+    <ClInclude Include="..\src\platform\win\QualityOpenH264Encoder.h" />
+    <ClInclude Include="..\src\platform\win\H264EncoderBenchmark.h" />
+    <ClInclude Include="..\src\platform\win\MfD3D11H264DecoderBenchmark.h" />
+    <ClInclude Include="..\src\platform\win\VideoEncoderProbePolicy.h" />
+    <ClInclude Include="..\src\platform\win\MfD3D11H264DecoderFactory.h" />
+    <ClInclude Include="..\src\webrtc\IWebRtcSession.h" />
+    <ClInclude Include="..\src\webrtc\VideoDecoderRuntimeStatus.h" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.AudioSlot.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.DataChannelCallbacks.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.DataChannels.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.h" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSessionInternal.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Lifecycle.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Negotiation.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.NegotiationInternals.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Observers.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.State.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.StatsClose.inc" />
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.VideoSlots.inc" />
+    <ClInclude Include="..\src\webrtc\PeerConnectionStatsCollector.h" />
+    <ClInclude Include="..\src\webrtc\VideoEncoderRuntimeStatus.h" />
+    <ClInclude Include="..\src\webrtc\WebRtcRuntime.h" />
+    <ClInclude Include="..\src\webrtc\WindowsPreferredVideoDecoderFactory.h" />
+    <ClInclude Include="..\src\webrtc\WindowsPreferredVideoEncoderFactory.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

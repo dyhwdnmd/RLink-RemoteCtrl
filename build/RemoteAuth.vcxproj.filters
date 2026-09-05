@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{C2112E18-DE1F-43F3-915A-F4FCEBB6C9E7}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{6C4FF1D5-C4B2-44B6-BC4C-97C6D4DA8429}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\auth\AuthConfig.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\auth\AuthManager.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\auth\DpapiTokenStore.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\auth\OidcDiscovery.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\auth\AuthConfig.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\auth\AuthManager.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\auth\AuthTypes.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\auth\DpapiTokenStore.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\auth\OidcDiscovery.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\auth\TokenStore.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

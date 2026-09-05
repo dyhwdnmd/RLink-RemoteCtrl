@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6A5419AB-D414-4DC4-91D7-1680D9AF2A93}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="RemoteProcessCommon.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\apps\remote\FileTransferController.cpp" />
+    <ClCompile Include="..\src\apps\remote\ClipboardCacheManager.cpp" />
+    <ClCompile Include="..\src\apps\remote\ClipboardController.cpp" />
+    <ClCompile Include="..\src\apps\remote\FileTransferStorage.cpp" />
+    <ClCompile Include="..\src\apps\remote\InProcessSessionEngine.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsFileTransferService.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsClipboardService.cpp" />
+    <ClCompile Include="..\src\platform\win\WindowsCursorMonitor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\apps\remote\FileTransferController.h" />
+    <ClInclude Include="..\src\apps\remote\ClipboardCacheManager.h" />
+    <ClInclude Include="..\src\apps\remote\ClipboardController.h" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Chunking.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Commands.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Lifecycle.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Receive.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Reliability.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Send.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferController.Worker.inc" />
+    <ClInclude Include="..\src\apps\remote\FileTransferStorage.h" />
+    <ClInclude Include="..\src\apps\remote\DirectSessionRuntimeState.h" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.h" />
+    <ClInclude Include="..\src\core\DirectSessionRequest.h" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngineInternal.h" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Audio.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Camera.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectBridge.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectData.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectScreen.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectCallbacks.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.DirectSession.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.LeaseCallbacks.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Lifecycle.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.MediaDevices.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.MediaHooks.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RemoteControl.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RemoteCursor.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.Room.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomCallbacks.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairChannels.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairControlDispatch.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairDispatchPreamble.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairInputDispatch.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairLifecycle.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairScreenDispatch.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RoomPairState.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.RuntimeHelpers.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.ScreenPolicyFile.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.ScreenShare.inc" />
+    <ClInclude Include="..\src\apps\remote\InProcessSessionEngine.VideoSlots.inc" />
+    <ClInclude Include="..\src\platform\win\WindowsFileTransferService.h" />
+    <ClInclude Include="..\src\platform\win\WindowsClipboardService.h" />
+    <ClInclude Include="..\src\platform\win\WindowsCursorMonitor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="RemoteCore.vcxproj">
+      <Project>{C315B762-FE07-4C43-94F6-42473E98C380}</Project>
+    </ProjectReference>
+    <ProjectReference Include="WebRtcTransport.vcxproj">
+      <Project>{D24E7C40-8824-479B-AC12-416D1523FCE9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="SignalingTransport.vcxproj">
+      <Project>{8E9E8C28-6F04-4E1F-B5F2-12D569E2D899}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

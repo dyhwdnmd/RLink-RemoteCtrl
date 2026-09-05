@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files"><UniqueIdentifier>{87F5FE84-29A8-458C-B6F6-860F3605E68C}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{64DFB789-16EE-4F7D-A4CD-A123E98C8316}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\platform\win\D3D11DesktopFrameBuffer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\DesktopBgraFrameBuffer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\D3D11NativeFrameBuffer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\DxgiNativeDesktopCapturer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsDesktopCaptureSource.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsCameraCaptureSource.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsDisplayTopology.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\WindowsHardwareFingerprint.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfH264EncoderCapabilityProbe.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfD3D11H264Encoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfD3D11H264EncoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfH264EncoderSelfTest.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfD3D11H264Decoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\FfmpegD3D11H264Decoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\FfmpegHardwareH264Encoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\FfmpegHardwareH264EncoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\FfmpegX264H264Encoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\FfmpegX264H264EncoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\QualityOpenH264Encoder.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\H264EncoderBenchmark.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfD3D11H264DecoderBenchmark.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\platform\win\MfD3D11H264DecoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\webrtc\LibWebRtcSession.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\webrtc\PeerConnectionStatsCollector.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\webrtc\WebRtcRuntime.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\webrtc\WindowsPreferredVideoDecoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\webrtc\WindowsPreferredVideoEncoderFactory.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\platform\win\D3D11DesktopFrameBuffer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\DesktopBgraFrameBuffer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\D3D11NativeFrameBuffer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\DxgiNativeDesktopCapturer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsDesktopCaptureSource.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsCameraCaptureSource.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsDisplayTopology.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\WindowsHardwareFingerprint.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfH264EncoderCapabilityProbe.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfD3D11H264Encoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfD3D11H264EncoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfH264EncoderSelfTest.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfD3D11H264Decoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\FfmpegD3D11H264Decoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\FfmpegHardwareH264Encoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\FfmpegHardwareH264EncoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\FfmpegX264H264Encoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\FfmpegX264H264EncoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\QualityOpenH264Encoder.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\H264EncoderBenchmark.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfD3D11H264DecoderBenchmark.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\MfD3D11H264DecoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\IWebRtcSession.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\VideoDecoderRuntimeStatus.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.AudioSlot.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.DataChannelCallbacks.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.DataChannels.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSessionInternal.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Negotiation.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.NegotiationInternals.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.Observers.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.State.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.StatsClose.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\LibWebRtcSession.VideoSlots.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\PeerConnectionStatsCollector.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\VideoEncoderRuntimeStatus.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\platform\win\VideoEncoderProbePolicy.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\WebRtcRuntime.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\WindowsPreferredVideoDecoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\webrtc\WindowsPreferredVideoEncoderFactory.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\server\auth\LogtoUserInfoClient.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\auth\LogtoManagementClient.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\auth\LogtoWebhookServer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\persistence\IdentityStore.cpp"><Filter>Source Files</Filter></ClCompile>
+    <Filter Include="Source Files"><UniqueIdentifier>{29B9F002-F689-43B4-9EB0-FF19AA0EE330}</UniqueIdentifier></Filter>
+    <Filter Include="Header Files"><UniqueIdentifier>{46323E02-0283-4B9C-A4C2-2C88E3E27212}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\server\auth\AuthTypes.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\auth\LogtoUserInfoClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\auth\LogtoManagementClient.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\auth\LogtoWebhookServer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\persistence\IdentityStore.h"><Filter>Header Files</Filter></ClInclude>
+    <ClCompile Include="..\src\server\signaling\AccessTokenService.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\signaling\SignalServer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\signaling\SignalServerSupport.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="..\src\server\signaling\SignalServerMain.cpp"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\server\signaling\AccessTokenService.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.Authentication.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.AccountManagement.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.Connection.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.LegacySession.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.Lifecycle.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.Recovery.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.Relay.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomLeases.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomMembership.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomPairs.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServer.RoomState.inc"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SignalServerSupport.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="..\src\server\signaling\SlidingWindowRateLimiter.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+</Project>
