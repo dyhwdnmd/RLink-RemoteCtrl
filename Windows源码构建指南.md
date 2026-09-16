@@ -124,11 +124,74 @@ libwebrtc 是整个构建中体积最大、耗时最长的外部依赖。不要�
 的预编译库；WebRTC 的源码、生成头文件、静态库、编译器 ABI 和 CRT
 配置必须互相匹配。
 
-先安装并将 `depot_tools` 加入 `PATH`，然后按照 WebRTC 官方 Windows
-流程取得源码。revision 必须写入 `.gclient` 的 solution url：这一版 gclient
-会忽略单独的 `"revision"` 键，而 solution url 不带 revision 时会跟踪
-`origin/main`，下一次 `gclient sync` 就会把手工 `git checkout` 覆盖掉。以下
-示例把源码放在 `E:\webrtc_src`：
+### 自动方式：`scripts\Prepare-LibWebRtc.ps1`
+
+脚本会完成本节全部工作：
+
+- 解析 depot_tools：已有的检出（`-DepotTools`、`RLINK_DEPOT_TOOLS` 或 `PATH`
+  上）直接复用，并把它的 `HEAD` 与固定 revision 比对（不一致只告警）；
+  完全找不到时才克隆固定 revision；
+- 在 `git.bat` 缺失时引导 depot_tools 包装脚本；
+- 写入或改写 `.gclient` 的 solution url 以固定 WebRTC commit；
+- 一遍执行 `gclient sync -D`，并断言同步后的 `HEAD` 等于固定 commit；
+- 把 `default_crt` 修补为动态 CRT（见下文）；
+- 写入两个 `args.gn`，并编译 `out\ReleaseMD` 与 `out\DebugMD`。
+
+```powershell
+scripts\Prepare-LibWebRtc.ps1 `
+  -Root D:\dev\webrtc_src `
+  -MsvsPath "C:\Program Files\Microsoft Visual Studio\2022\Community"
+```
+
+`-Root` 是包含（或将要包含）WebRTC `src` 检出的目录。它没有提交到任何地方：
+WebRTC 检出位于本仓库之外、路径因机器而异，脚本对它没有默认值，在此也无法
+推断——`RLINK_WEBRTC_SRC` 要到第 5 节才设置。因此需要显式传 `-Root`，或先
+按第 5 节设置 `RLINK_WEBRTC_SRC`。
+
+常用开关：
+
+- `-DepotTools <路径>` 复用指定的 depot_tools 检出；`-DepotToolsRoot <路径>`
+  改变新建克隆的落点。新克隆默认落在 `-Root` 的同级目录，因此
+  `-Root E:\webrtc_src` 会克隆到 `E:\depot_tools`。
+- `-Configurations Release` 只构建 CMake 始终需要的 Release 树；不加则同时
+  构建 Debug 树。
+- `-SkipBuild` 只写 `args.gn`、不执行 `gn gen`/`ninja`；`-SkipFetch` 复用已有
+  检出而不做同步。使用 `-SkipFetch` 时 depot_tools 必须已经可以解析到。
+
+### 手工方式
+
+逐步完成同样的工作。`E:\webrtc_src` 与 `E:\depot_tools` 只是示例，请替换为
+你自己的路径。
+
+**1. 安装 depot_tools** 并固定到第 2 节的 revision：
+
+```powershell
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git E:\depot_tools
+git -C E:\depot_tools checkout 3799a497b1e483ab3625b91f9540155e8d311985
+```
+
+先引导一次包装脚本。全新克隆在引导完成前不会生成 `git.bat`，此时 `gclient`
+会抛出令人困惑的 `git.bat` `FileNotFoundError`：
+
+```powershell
+E:\depot_tools\bootstrap\win_tools.bat
+```
+
+下面的命令需要把 `E:\depot_tools` 放到 `PATH` 最前面（或直接写全路径调用），
+并设置 `DEPOT_TOOLS_UPDATE=0`，避免它自更新后偏离固定 revision。
+
+**2. 设置 WebRTC 需要的 Git 配置**——`core.autocrlf=false` 与
+`core.longpaths=true`——见第 2 节；例如只对当前 shell 生效：
+
+```powershell
+$env:GIT_CONFIG_COUNT = '2'
+$env:GIT_CONFIG_KEY_0   = 'core.autocrlf';  $env:GIT_CONFIG_VALUE_0 = 'false'
+$env:GIT_CONFIG_KEY_1   = 'core.longpaths'; $env:GIT_CONFIG_VALUE_1 = 'true'
+```
+
+**3. 写入固定的 `.gclient`** 并一遍完成同步。revision 必须写入 solution url：
+这一版 gclient 会忽略单独的 `"revision"` 键，而 solution url 不带 revision 时
+会跟踪 `origin/main`，下一次 `gclient sync` 就会把手工 `git checkout` 覆盖掉。
 
 ```powershell
 New-Item -ItemType Directory -Force E:\webrtc_src
@@ -146,23 +209,17 @@ gclient sync -D
 ```
 
 `gclient sync` 会把 `src` 拉取/检出到固定 revision，并按该 revision 的 DEPS
-一次性同步全部依赖，不需要再单独 `git checkout`。不要用
-`fetch --nohooks webrtc` 起步：它会写出不带 revision 的 `.gclient`、先按
-`origin/main` 同步一遍，而且在 `.gclient` 已存在时会拒绝运行。用下面的命令
-校验结果：
+一次性同步全部依赖，不需要再单独 `git checkout`。用下面的命令校验结果：
 
 ```powershell
 git -C E:\webrtc_src\src rev-parse HEAD
 # 必须输出 1e2bd46a33bc0a95ff4e032e380f9fcfa2505808
 ```
 
-如果要固定的是分支头（`refs/branch-heads/...`）而不是提交，需要额外加
-`gclient sync --with_branch_heads`；固定提交则不需要。
-
-`scripts\Prepare-LibWebRtc.ps1` 可自动完成本节全部工作：必要时引导
-depot_tools 包装脚本、写入或改写 `.gclient` 的 solution url 以固定 revision、
-一遍完成同步、断言同步后的 `HEAD` 等于固定 commit、应用下面的 CRT 修补、
-写入两个 `args.gn`，并编译 `out\ReleaseMD` 与 `out\DebugMD`。
+不要用 `fetch --nohooks webrtc` 起步：它会写出不带 revision 的 `.gclient`、
+先按 `origin/main` 同步一遍，而且在 `.gclient` 已存在时会拒绝运行；此时应直接
+执行 `gclient sync`。如果要固定的是分支头（`refs/branch-heads/...`）而不是
+提交，需要额外加 `gclient sync --with_branch_heads`；固定提交则不需要。
 
 手工操作时需要注意 depot_tools 的两个坑：
 
@@ -172,6 +229,11 @@ depot_tools 包装脚本、写入或改写 `.gclient` 的 solution url 以固定
 - 若在已存在 `.gclient` 的目录改用 `fetch`（而非上面的流程），它会拒绝继续
   （提示 “already contain ... a checkout”）。此时应直接执行 `gclient sync`；
   `fetch` 只是「写 `.gclient` + 跑一次 `gclient sync`」的包装。
+
+**4. 写入 `args.gn`、应用动态 CRT 修补、然后运行 `gn gen`/`ninja`**——即下面
+三节，按此顺序，并使用第 2 节的 v143 工具链覆盖。
+
+#### Release 的 args.gn
 
 在 `E:\webrtc_src\src\out\ReleaseMD\args.gn` 写入：
 
@@ -210,6 +272,8 @@ ffmpeg_branding = "Chrome"
 `scripts\Prepare-LibWebRtc.ps1` 会在 `gn gen` 之前自动应用该修补。修补位于
 WebRTC 检出（本仓库之外），若某次 `gclient sync` 更新了 `build` 依赖就会
 被覆盖；链接再次出现 CRT 不匹配时，重跑脚本或重新应用即可。
+
+#### 生成并编译（Release）
 
 生成并编译 WebRTC（同时应用第 2 节的 v143 工具链覆盖）：
 
@@ -260,6 +324,9 @@ Debug 主程序要链接 Debug 版 WebRTC，因此需要第二份 GN 输出目�
 MSVC 默认的 IDL 2 且不可更改，所以主程序与 WebRTC 都必须对齐到 2：
 `std::string`/`std::wstring` 在 IDL 0 与 2 下的布局不同，按值跨 Qt DLL 边界
 返回时会把调用方的栈写坏。
+
+自动方式已经覆盖这份输出：加 `-Configurations Debug` 只构建它，不加则两套
+都构建。手工步骤如下。
 
 创建 `E:\webrtc_src\src\out\DebugMD\args.gn`（参数相同，`is_debug = true`）：
 

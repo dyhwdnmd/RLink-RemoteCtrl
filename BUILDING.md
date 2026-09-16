@@ -135,11 +135,86 @@ libwebrtc is the largest and most time-consuming external dependency. Do not
 use an arbitrary prebuilt version. The WebRTC source, generated headers,
 static libraries, compiler ABI, and CRT configuration must match.
 
-Install `depot_tools`, add it to `PATH`, and obtain the WebRTC source through
-the official Windows workflow. The revision has to be part of the solution URL
-in `.gclient`: this `gclient` ignores a separate `"revision"` key, and a solution
-URL without a revision tracks `origin/main`, so a bare `git checkout` is undone
-by the next `gclient sync`. The following example uses `E:\webrtc_src`:
+Both workflows below produce the same artifacts. Prefer the automatic one; it
+runs the manual steps and adds the revision checks described in section 2.
+
+### Automatic: `scripts\Prepare-LibWebRtc.ps1`
+
+The script performs this whole section:
+
+- resolves depot_tools: an existing checkout (`-DepotTools`,
+  `RLINK_DEPOT_TOOLS`, or on `PATH`) is reused and its `HEAD` compared against
+  the pinned revision, which only warns on a mismatch; when none is found it
+  clones the pinned revision,
+- bootstraps the depot_tools wrappers when `git.bat` is missing,
+- writes or re-pins the `.gclient` solution URL to the pinned WebRTC commit,
+- runs `gclient sync -D` in one pass and asserts that the resulting `HEAD`
+  equals the pinned commit,
+- patches `default_crt` to the dynamic CRT (see below),
+- writes both `args.gn` files and builds `out\ReleaseMD` and `out\DebugMD`.
+
+```powershell
+scripts\Prepare-LibWebRtc.ps1 `
+  -Root D:\dev\webrtc_src `
+  -MsvsPath "C:\Program Files\Microsoft Visual Studio\2022\Community"
+```
+
+`-Root` is the directory that contains (or will contain) the WebRTC `src`
+checkout. It is not committed anywhere: the WebRTC checkout lives outside this
+repository and its location is machine-specific, so the script has no default
+for it and cannot infer it here — `RLINK_WEBRTC_SRC` is only set later, in
+section 5. Pass `-Root`, or set `RLINK_WEBRTC_SRC` first (section 5).
+
+Useful switches:
+
+- `-DepotTools <path>` reuses a specific depot_tools checkout, and
+  `-DepotToolsRoot <path>` changes where a fresh clone goes. A fresh clone
+  defaults to the sibling of `-Root`, so `-Root E:\webrtc_src` clones into
+  `E:\depot_tools`.
+- `-Configurations Release` builds only the tree CMake always requires; omit it
+  to build `Debug` as well.
+- `-SkipBuild` writes `args.gn` without running `gn gen`/`ninja`; `-SkipFetch`
+  reuses an existing checkout instead of syncing. With `-SkipFetch`, depot_tools
+  must already be resolvable.
+
+### Manual
+
+The same work step by step. `E:\webrtc_src` and `E:\depot_tools` are examples;
+substitute your own paths.
+
+**1. Install depot_tools** at the revision pinned in section 2:
+
+```powershell
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git E:\depot_tools
+git -C E:\depot_tools checkout 3799a497b1e483ab3625b91f9540155e8d311985
+```
+
+Bootstrap the wrappers once. A fresh checkout does not create `git.bat` until
+this runs, and `gclient` fails with a confusing `FileNotFoundError` for
+`git.bat` until then:
+
+```powershell
+E:\depot_tools\bootstrap\win_tools.bat
+```
+
+For the commands below, add `E:\depot_tools` to the front of `PATH` (or call its
+scripts by full path). Set `DEPOT_TOOLS_UPDATE=0` so it does not update itself
+off the pinned revision.
+
+**2. Set the Git settings WebRTC requires** — `core.autocrlf=false` and
+`core.longpaths=true` — as described in section 2, for example for the current
+shell only:
+
+```powershell
+$env:GIT_CONFIG_COUNT = '2'
+$env:GIT_CONFIG_KEY_0   = 'core.autocrlf';  $env:GIT_CONFIG_VALUE_0 = 'false'
+$env:GIT_CONFIG_KEY_1   = 'core.longpaths'; $env:GIT_CONFIG_VALUE_1 = 'true'
+```
+
+**3. Write the pinned `.gclient`** and sync it in one pass. The revision has to
+be part of the solution URL: this `gclient` ignores a separate `"revision"` key,
+and a solution URL without a revision tracks `origin/main`, so a bare
+`git checkout` is undone by the next `gclient sync`.
 
 ```powershell
 New-Item -ItemType Directory -Force E:\webrtc_src
@@ -158,33 +233,25 @@ gclient sync -D
 
 `gclient sync` clones or checks out `src` at the pinned revision and syncs every
 DEPS dependency to that same revision in one pass; no separate `git checkout` is
-needed. Do not start with `fetch --nohooks webrtc`: it writes an unpinned
-`.gclient`, does an initial sync at `origin/main`, and refuses to run once a
-`.gclient` exists. Verify the result with:
+needed. Verify the result with:
 
 ```powershell
 git -C E:\webrtc_src\src rev-parse HEAD
 # must print 1e2bd46a33bc0a95ff4e032e380f9fcfa2505808
 ```
 
+Do not start with `fetch --nohooks webrtc`: it writes an unpinned `.gclient`,
+does an initial sync at `origin/main`, and refuses to run once a `.gclient`
+exists. If you run `fetch` on a directory that already has one, it refuses to
+continue ("already contain ... a checkout"); use `gclient sync` there instead.
 Pinning a branch head (`refs/branch-heads/...`) instead of a commit additionally
 needs `gclient sync --with_branch_heads`; a commit pin does not.
 
-`scripts\Prepare-LibWebRtc.ps1` automates this whole section: it bootstraps the
-depot_tools wrappers if needed, writes or re-pins the `.gclient` solution URL,
-syncs the pinned revision in one pass, asserts that the resulting `HEAD` equals
-the pinned commit, applies the CRT edit below, writes both `args.gn` files and
-builds `out\ReleaseMD` and `out\DebugMD`.
+**4. Write `args.gn`, apply the dynamic-CRT edit, then run `gn gen` and
+`ninja`** — the three subsections below, in that order, with the v143 toolchain
+override from section 2.
 
-Two depot_tools pitfalls to expect if doing it by hand:
-
-- A fresh depot_tools checkout does not create `git.bat` until its bootstrap
-  runs, and `gclient` fails with a confusing `FileNotFoundError` for `git.bat`
-  until then. Run `<depot_tools>\bootstrap\win_tools.bat` once.
-- If you run `fetch` instead of the flow above on a directory that already has a
-  `.gclient`, it refuses to continue ("already contain ... a checkout"). Use
-  `gclient sync` there instead; `fetch` is only a wrapper that writes a
-  `.gclient` and runs `gclient sync` once.
+#### Release args.gn
 
 Create `E:\webrtc_src\src\out\ReleaseMD\args.gn` with:
 
@@ -226,6 +293,8 @@ Windows:
 `gn gen`. The edit lives in the WebRTC checkout (outside this repository) and a
 `gclient sync` that updates the `build` dependency can overwrite it; re-run the
 script (or re-apply the edit) if linking later fails with CRT mismatches again.
+
+#### Generate and build (Release)
 
 Generate and build WebRTC (using the v143 toolchain override from section 2):
 
@@ -279,6 +348,9 @@ default, iterator debugging must stay **enabled** so that WebRTC uses
 them: `std::string`/`std::wstring` have a different layout at IDL 0 versus 2,
 and returning one by value across the Qt DLL boundary corrupts the caller's
 stack.
+
+The automatic workflow already covers this: `-Configurations Debug` builds only
+this tree, and omitting `-Configurations` builds both. The manual steps follow.
 
 Create `E:\webrtc_src\src\out\DebugMD\args.gn` — same arguments, `is_debug = true`:
 

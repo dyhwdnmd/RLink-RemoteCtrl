@@ -5,9 +5,11 @@
 Prepares the pinned libwebrtc static libraries used by the RLink CMake build.
 
 .DESCRIPTION
-Checks out the WebRTC revision pinned in BUILDING.md, syncs every DEPS
-dependency to that revision, forces the dynamic CRT, writes the GN args and
-builds the static libraries that RLinkAPP links against.
+Resolves depot_tools (reusing an existing checkout when one is found and
+verifying its revision, otherwise cloning the pinned revision) and the WebRTC
+revision pinned in BUILDING.md, syncs every DEPS dependency to that revision,
+forces the dynamic CRT, writes the GN args and builds the static libraries that
+RLinkAPP links against.
 
 The revision is enforced by putting it in the `src` solution URL in .gclient
 (`.../src.git@<commit>`), not by a bare `git checkout`: this gclient ignores a
@@ -36,7 +38,14 @@ the parent of $env:RLINK_WEBRTC_SRC when set.
 
 .PARAMETER DepotTools
 depot_tools checkout. Defaults to $env:RLINK_DEPOT_TOOLS, then to the directory
-of gclient.bat on PATH.
+of gclient.bat on PATH. A resolved checkout is reused as-is; its HEAD is compared
+against the pinned depot_tools revision and a warning is printed on a mismatch.
+When no checkout can be resolved, the pinned revision is cloned instead.
+
+.PARAMETER DepotToolsRoot
+Directory into which depot_tools is cloned when no existing checkout can be
+resolved. Defaults to the parent of Root plus `depot_tools`, so a single -Root
+is enough (-Root E:\webrtc_src clones into E:\depot_tools).
 
 .PARAMETER MsvsPath
 Visual Studio 2022 installation root used for GYP_MSVS_OVERRIDE_PATH, so WebRTC
@@ -49,13 +58,15 @@ both. Default: both.
 
 .PARAMETER SkipFetch
 Skip the pinned checkout/sync and only re-patch, gn gen and build an existing
-checkout. The existing HEAD is reported but not changed.
+checkout. The existing HEAD is reported but not changed. depot_tools is not
+cloned either; an existing checkout must already be resolvable.
 
 .PARAMETER SkipBuild
 Patch and write args.gn only; do not run gn gen or ninja.
 
 .EXAMPLE
-.\scripts\Prepare-LibWebRtc.ps1 -Root D:\dev\webrtc_src -DepotTools D:\dev\depot_tools
+# Reuses depot_tools from PATH, or clones the pinned revision next to -Root.
+.\scripts\Prepare-LibWebRtc.ps1 -Root D:\dev\webrtc_src -MsvsPath "C:\Program Files\Microsoft Visual Studio\2022\Community"
 
 .EXAMPLE
 .\scripts\Prepare-LibWebRtc.ps1 -SkipFetch -Configurations Release
@@ -64,6 +75,7 @@ Patch and write args.gn only; do not run gn gen or ninja.
 param(
     [string]$Root,
     [string]$DepotTools,
+    [string]$DepotToolsRoot,
     [string]$MsvsPath,
     [ValidateSet('Release', 'Debug')]
     [string[]]$Configurations = @('Release', 'Debug'),
@@ -75,6 +87,8 @@ $ErrorActionPreference = 'Stop'
 
 $WebRtcCommit = '1e2bd46a33bc0a95ff4e032e380f9fcfa2505808'
 $WebRtcUrl = 'https://webrtc.googlesource.com/src.git'
+$DepotToolsCommit = '3799a497b1e483ab3625b91f9540155e8d311985'
+$DepotToolsUrl = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
 
 $OutByConfig = @{
     Release = 'out\ReleaseMD'
@@ -119,6 +133,8 @@ if (-not $Root) {
     throw "Specify -Root (the directory that contains the WebRTC 'src' checkout) or set RLINK_WEBRTC_SRC."
 }
 
+# depot_tools: an explicit -DepotTools, RLINK_DEPOT_TOOLS or a checkout on PATH
+# wins; anything else is cloned into $DepotToolsRoot further down.
 if (-not $DepotTools -and $env:RLINK_DEPOT_TOOLS) {
     $DepotTools = $env:RLINK_DEPOT_TOOLS
 }
@@ -128,14 +144,87 @@ if (-not $DepotTools) {
         $DepotTools = Split-Path -Parent $gclient.Source
     }
 }
-if (-not $DepotTools -or -not (Test-Path -LiteralPath (Join-Path $DepotTools 'gclient.bat'))) {
-    throw "depot_tools not found. Pass -DepotTools or set RLINK_DEPOT_TOOLS, or add it to PATH."
-}
 
 $Root = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Root)
-$DepotTools = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DepotTools)
 $Src = Join-Path $Root 'src'
 $GclientFile = Join-Path $Root '.gclient'
+
+# Where a fresh depot_tools checkout goes when none was resolved. Defaulting to
+# the WebRTC root's sibling keeps a single -Root sufficient
+# (-Root E:\webrtc_src -> E:\depot_tools).
+if (-not $DepotToolsRoot) {
+    $DepotToolsRoot = Join-Path (Split-Path -Parent $Root) 'depot_tools'
+}
+$DepotToolsRoot = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DepotToolsRoot)
+if (-not $DepotTools) {
+    $DepotTools = $DepotToolsRoot
+}
+else {
+    $DepotTools = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DepotTools)
+}
+
+# --- git settings WebRTC needs, scoped to this process tree -----------------
+# Injected via GIT_CONFIG_COUNT so the user's global git config is not modified.
+# (git config --global core.autocrlf false would work too, but it changes every
+# repository on the machine.) Applied before any clone below so core.longpaths
+# also covers the depot_tools clone.
+$gitSettings = @(
+    @{ Key = 'core.autocrlf';    Value = 'false' },
+    @{ Key = 'core.filemode';    Value = 'false' },
+    @{ Key = 'core.fscache';     Value = 'true' },
+    @{ Key = 'core.preloadindex'; Value = 'true' },
+    @{ Key = 'core.longpaths';   Value = 'true' }
+)
+$env:GIT_CONFIG_COUNT = [string]$gitSettings.Count
+for ($i = 0; $i -lt $gitSettings.Count; $i++) {
+    Set-Item -Path ("Env:GIT_CONFIG_KEY_{0}" -f $i) -Value $gitSettings[$i].Key
+    Set-Item -Path ("Env:GIT_CONFIG_VALUE_{0}" -f $i) -Value $gitSettings[$i].Value
+}
+
+# OS long path support is machine-wide and cannot be changed without elevation.
+$longPaths = (Get-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -ErrorAction SilentlyContinue).LongPathsEnabled
+if ($longPaths -ne 1) {
+    Write-Warning ('Windows long path support (LongPathsEnabled) is off; relying on ' +
+        'git core.longpaths=true. Enable it from an elevated shell if a checkout ' +
+        'fails with path-too-long errors.')
+}
+
+# --- depot_tools: reuse and verify, or clone the pinned revision ------------
+if (Test-Path -LiteralPath (Join-Path $DepotTools '.git')) {
+    $depotHead = (& git -C $DepotTools rev-parse HEAD).Trim()
+    if ($depotHead -ne $DepotToolsCommit) {
+        Write-Warning ("depot_tools at $DepotTools is at $depotHead, not the pinned " +
+            "$DepotToolsCommit; using it as-is. Check it out manually if the build misbehaves.")
+    }
+    else {
+        Write-Step "depot_tools at $DepotTools is the pinned revision."
+    }
+}
+elseif (Test-Path -LiteralPath $DepotTools) {
+    Write-Warning "depot_tools at $DepotTools has no .git; the pinned revision cannot be verified."
+}
+elseif ($SkipFetch) {
+    throw "depot_tools not found at $DepotTools and -SkipFetch was given. Pass -DepotTools or set RLINK_DEPOT_TOOLS."
+}
+else {
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $DepotTools) | Out-Null
+    Write-Step "Cloning depot_tools@$DepotToolsCommit into $DepotTools"
+    Invoke-Native "clone depot_tools@$DepotToolsCommit" {
+        & git clone $DepotToolsUrl $DepotTools
+    }
+    Invoke-Native "check out depot_tools@$DepotToolsCommit" {
+        & git -C $DepotTools checkout --detach $DepotToolsCommit
+    }
+    $depotHead = (& git -C $DepotTools rev-parse HEAD).Trim()
+    if ($depotHead -ne $DepotToolsCommit) {
+        throw "depot_tools checkout is at $depotHead, expected $DepotToolsCommit."
+    }
+    Write-Step "depot_tools src pinned at $depotHead"
+}
+
+if (-not (Test-Path -LiteralPath (Join-Path $DepotTools 'gclient.bat'))) {
+    throw "depot_tools not found at $DepotTools (no gclient.bat). Pass -DepotTools or remove the directory and re-run."
+}
 
 # depot_tools must be first on PATH and must not update itself off the pinned revision.
 $env:PATH = "$DepotTools;$env:PATH"
@@ -169,31 +258,6 @@ if (-not $MsvsPath -or -not (Test-Path -LiteralPath $MsvsPath)) {
     throw "Visual Studio 2022 with the C++ toolset was not found. Pass -MsvsPath or set GYP_MSVS_OVERRIDE_PATH (see BUILDING.md section 2)."
 }
 $env:GYP_MSVS_OVERRIDE_PATH = $MsvsPath
-
-# --- git settings WebRTC needs, scoped to this process tree -----------------
-# Injected via GIT_CONFIG_COUNT so the user's global git config is not modified.
-# (git config --global core.autocrlf false would work too, but it changes every
-# repository on the machine.)
-$gitSettings = @(
-    @{ Key = 'core.autocrlf';    Value = 'false' },
-    @{ Key = 'core.filemode';    Value = 'false' },
-    @{ Key = 'core.fscache';     Value = 'true' },
-    @{ Key = 'core.preloadindex'; Value = 'true' },
-    @{ Key = 'core.longpaths';   Value = 'true' }
-)
-$env:GIT_CONFIG_COUNT = [string]$gitSettings.Count
-for ($i = 0; $i -lt $gitSettings.Count; $i++) {
-    Set-Item -Path ("Env:GIT_CONFIG_KEY_{0}" -f $i) -Value $gitSettings[$i].Key
-    Set-Item -Path ("Env:GIT_CONFIG_VALUE_{0}" -f $i) -Value $gitSettings[$i].Value
-}
-
-# OS long path support is machine-wide and cannot be changed without elevation.
-$longPaths = (Get-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -ErrorAction SilentlyContinue).LongPathsEnabled
-if ($longPaths -ne 1) {
-    Write-Warning ('Windows long path support (LongPathsEnabled) is off; relying on ' +
-        'git core.longpaths=true. Enable it from an elevated shell if a checkout ' +
-        'fails with path-too-long errors.')
-}
 
 Write-Step "WebRTC src : $Src"
 Write-Step "depot_tools: $DepotTools"
