@@ -1,10 +1,15 @@
-# Visual Studio local state
+# Editor / IDE local state
 .vs/
 *.suo
 *.user
-LocalBuild.props
-*.VC.db
-*.VC.VC.opendb
+
+# CMake local state and build trees
+/out/
+/build/
+/CMakeUserPresets.json
+/cmake/local.bat
+CMakeCache.txt
+CMakeFiles/
 
 # Build output
 x64/
@@ -15,8 +20,6 @@ x64/
 *.obj
 *.pdb
 *.ilk
-*.tlog
-*.lastbuildstate
 *.log
 
 # Packaged releases

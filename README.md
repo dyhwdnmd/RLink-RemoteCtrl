@@ -101,12 +101,13 @@ RLink 使用 Qt 构建原生桌面界面和 WSS 信令客户端，以 libwebrtc 
 
 ## 构建
 
-要求 Visual Studio 2022、MSVC v143、Windows SDK、Qt 6.11.1
-（MSVC 2022 x64）以及使用 `/MD` 构建的 WebRTC。
+要求 CMake 3.24+、Visual Studio 2022（v143 工具集）、Windows SDK、
+Qt 6.11.x（MSVC 2022 x64）以及使用 `/MD` 构建的 WebRTC。
 
-本机路径与仓库默认值不同时，复制
-`build\LocalBuild.props.example` 为 `build\LocalBuild.props` 并修改路径。
-该文件已忽略，不要在其中保存信令令牌、证书私钥或其他凭证。
+依赖路径通过环境变量 `RLINK_QT_DIR`、`RLINK_WEBRTC_SRC`、
+`RLINK_WEBRTC_OUT` 提供；也可复制 `cmake\local.bat.example` 为
+`cmake\local.bat` 并填写本机路径。该文件已忽略，不要在其中保存
+信令令牌、证书私钥或其他凭证。
 
 第一次在全新 Windows 环境构建时，请先阅读
 [Windows 源码构建指南](Windows源码构建指南.md)。其中包含 Qt 组件、
@@ -114,13 +115,15 @@ RLink 使用 Qt 构建原生桌面界面和 WSS 信令客户端，以 libwebrtc 
 English readers can use [Building RLink on Windows](BUILDING.md).
 
 ```powershell
-MSBuild.exe .\build\RLink.sln /t:Build `
-  /p:Configuration=Release /p:Platform=x64 /m
+.\cmake_configure.bat
+cmake --build --preset windows-msvc-x64-v143-release -j
 ```
 
-请在 **Developer PowerShell for VS 2022** 或
-**x64 Native Tools Command Prompt for VS 2022** 中执行。若 `MSBuild.exe`
-不在 `PATH` 中，请改用本机 Visual Studio 对应的实际安装路径。
+也可直接用 CMake 预设：`cmake --preset windows-msvc-x64-v143` 后
+`cmake --build --preset windows-msvc-x64-v143-release -j`。
+
+Debug 构建使用 `cmake --build --preset windows-msvc-x64-v143-debug -j`，
+需要先按构建指南准备 Debug 版 WebRTC。
 
 主要产物位于 `x64\Release`：
 
@@ -138,7 +141,7 @@ MSBuild.exe .\build\RLink.sln /t:Build `
 
 ## 仓库结构
 
-- `build`：正式 Visual Studio 解决方案、工程文件和公共构建配置。
+- `cmake`：CMake 构建脚本（`CMakeLists.txt`、`CMakePresets.json`、`cmake_configure.bat`）。
 - `src`：RLink 客户端、服务端以及各功能模块源码。
 - `assets`：图标、SVG、主题、字体和 Windows 资源。
 - `third_party`：随项目构建或运行的第三方依赖。

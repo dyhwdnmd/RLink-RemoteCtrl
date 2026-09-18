@@ -1,0 +1,10 @@
+# Repository objects always store LF; the working tree uses the platform default
+# (CRLF on Windows, LF elsewhere). Prefer text=auto over a forced eol so that a
+# cross-platform checkout stays native.
+* text=auto
+
+# Binary assets: never convert or diff as text.
+*.png binary
+*.ico binary
+*.ttf binary
+*.dll binary

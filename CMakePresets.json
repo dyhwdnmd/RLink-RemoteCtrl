@@ -1,0 +1,50 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "RLINK_OUTPUT_DIR": "${sourceDir}/x64",
+        "RLINK_QT_DIR": "$env{RLINK_QT_DIR}",
+        "RLINK_WEBRTC_SRC": "$env{RLINK_WEBRTC_SRC}",
+        "RLINK_WEBRTC_OUT": "$env{RLINK_WEBRTC_OUT}",
+        "RLINK_WEBRTC_OUT_DEBUG": "$env{RLINK_WEBRTC_OUT_DEBUG}"
+      }
+    },
+    {
+      "name": "windows-msvc-base",
+      "hidden": true,
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64"
+    },
+    {
+      "name": "windows-msvc-x64-v143",
+      "displayName": "Windows MSVC x64 v143 (VS2022) - Qt 6.11 - WebRTC prebuilt",
+      "inherits": "windows-msvc-base",
+      "toolset": "v143"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-msvc-x64-v143-release",
+      "displayName": "Windows MSVC x64 v143 - Release",
+      "configurePreset": "windows-msvc-x64-v143",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-msvc-x64-v143-debug",
+      "displayName": "Windows MSVC x64 v143 - Debug",
+      "configurePreset": "windows-msvc-x64-v143",
+      "configuration": "Debug"
+    }
+  ]
+}

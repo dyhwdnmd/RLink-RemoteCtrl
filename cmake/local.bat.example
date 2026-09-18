@@ -1,0 +1,24 @@
+@echo off
+rem ---------------------------------------------------------------------------
+rem Per-machine dependency paths for the RemoteC CMake build.
+rem
+rem Copy this file to  cmake\local.bat  (Git-ignored) and adjust the paths.
+rem cmake_configure.bat loads it automatically when present; it is not tracked.
+rem
+rem Alternatively set these as persistent user environment variables and skip
+rem this file entirely.
+rem
+rem WARNING: the four values below are EXAMPLES, not defaults. Replace every one
+rem with the real path on this machine before use; a placeholder left in place
+rem makes cmake fail with "WebRTC ... were not found" or "Qt6Config.cmake not
+rem found".
+rem
+rem   RLINK_WEBRTC_SRC        the WebRTC `src` checkout itself (contains DEPS)
+rem   RLINK_WEBRTC_OUT        its GN output dir for Release (contains obj\webrtc.lib)
+rem   RLINK_WEBRTC_OUT_DEBUG  its GN output dir for Debug
+rem ---------------------------------------------------------------------------
+
+set "RLINK_QT_DIR=CHANGE_ME\6.11.x\msvc2022_64"
+set "RLINK_WEBRTC_SRC=CHANGE_ME\webrtc_src\src"
+set "RLINK_WEBRTC_OUT=CHANGE_ME\webrtc_src\src\out\ReleaseMD"
+set "RLINK_WEBRTC_OUT_DEBUG=CHANGE_ME\webrtc_src\src\out\DebugMD"

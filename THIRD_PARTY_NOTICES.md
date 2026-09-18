@@ -9,7 +9,8 @@ replacement for the complete license texts distributed by each project.
 
 - Project: The WebRTC project
 - Source used by this repository: commit
-  `1e2bd46a33bc0a95ff4e032e380f9fcfa2505808`
+  `1e2bd46a33bc0a95ff4e032e380f9fcfa2505808` (enforced by `BUILDING.md`
+  section 4 and `scripts/Prepare-LibWebRtc.ps1`)
 - License: BSD 3-Clause style license
 - License: <https://webrtc.googlesource.com/src/+/refs/heads/main/LICENSE>
 - Patent grant: <https://webrtc.googlesource.com/src/+/refs/heads/main/PATENTS>
