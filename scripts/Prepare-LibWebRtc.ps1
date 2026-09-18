@@ -48,18 +48,13 @@ resolved. Defaults to the parent of Root plus `depot_tools`, so a single -Root
 is enough (-Root E:\webrtc_src clones into E:\depot_tools).
 
 .PARAMETER MsvsPath
-Visual Studio 2022 installation root used for GYP_MSVS_OVERRIDE_PATH, so WebRTC
-uses the same MSVC STL as the CMake/Qt build (see BUILDING.md section 2). The
-installation is validated against the v143 toolset before anything is fetched or
-built, so an unusable path fails the run instead of producing a webrtc.lib that
-cannot link. Defaults to $env:GYP_MSVS_OVERRIDE_PATH, then to the VS2022
-installations reported by vswhere.
-
-.PARAMETER ExpectedMsvcVersion
-MSVC version the CMake build is expected to use, compared with the version that
-will actually be used from the resolved installation. A difference is reported
-as a warning only. Defaults to the version of the instance CMake is configured
-with in build\CMakeCache.txt, then to 14.44.35207.
+Visual Studio installation root used for GYP_MSVS_OVERRIDE_PATH, so WebRTC uses
+the same MSVC STL as the CMake/Qt build (see BUILDING.md section 2). It is
+validated against the toolset pinned in CMakePresets.json before anything is
+fetched or built: an unusable path fails the run instead of producing a
+webrtc.lib that cannot link. Defaults to $env:GYP_MSVS_OVERRIDE_PATH, which is
+validated the same way and is an error when unusable, then to the installations
+of that toolset's Visual Studio release reported by vswhere.
 
 .PARAMETER Configurations
 Which GN output trees to build: Release (out\ReleaseMD), Debug (out\DebugMD) or
@@ -86,7 +81,6 @@ param(
     [string]$DepotTools,
     [string]$DepotToolsRoot,
     [string]$MsvsPath,
-    [string]$ExpectedMsvcVersion,
     [ValidateSet('Release', 'Debug')]
     [string[]]$Configurations = @('Release', 'Debug'),
     [switch]$SkipFetch,
@@ -106,16 +100,27 @@ $OutByConfig = @{
 }
 
 # --- toolchain contract -----------------------------------------------------
-# CMakePresets.json pins the v143 toolset, so the application is compiled with
-# MSVC 14.3x/14.4x. WebRTC's GN build never records the toolset in args.gn:
-# build/vs_toolchain.py honours GYP_MSVS_OVERRIDE_PATH, build/toolchain/win/
-# setup_toolchain.py runs that installation's vcvarsall.bat, and both select the
-# highest VC\Tools\MSVC\14.* of the installation. An install whose highest 14.*
-# belongs to another toolset (for example VS 18 / 14.51, which is v145) produces
-# objects that reference __std_* helpers the v143 build cannot resolve, so it is
-# rejected here instead of when RLinkAPP fails to link (BUILDING.md section 2).
-$RequiredMsvcToolset = 'v143'
-$DefaultMsvcVersion = '14.44.35207'
+# WebRTC must be built with the same toolset as the application, which is the one
+# CMakePresets.json pins: Get-RequiredMsvcToolset() reads it below instead of the
+# script keeping its own copy that could drift. WebRTC's GN build never records
+# the toolset in args.gn: build/vs_toolchain.py honours GYP_MSVS_OVERRIDE_PATH,
+# build/toolchain/win/setup_toolchain.py runs that installation's vcvarsall.bat,
+# and both select the highest VC\Tools\MSVC\14.* of the installation. An install
+# whose highest 14.* belongs to another toolset (for example VS 18 / 14.51, which
+# is v145) produces objects that reference __std_* helpers the other toolset
+# cannot resolve, so it is rejected here instead of when RLinkAPP fails to link
+# (BUILDING.md section 2).
+#
+# Visual Studio release that ships each toolset. Only the toolsets the presets
+# may name are listed; it restricts the vswhere fallback, because an unrestricted
+# -latest lookup prefers a newer Visual Studio that may not have the toolset at
+# all.
+$VsReleaseByToolset = @{
+    v141 = '15'
+    v142 = '16'
+    v143 = '17'
+    v145 = '18'
+}
 
 function Write-Step([string]$Message) {
     Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $Message)
@@ -123,7 +128,19 @@ function Write-Step([string]$Message) {
 
 function Invoke-Native([string]$Name, [scriptblock]$Command) {
     Write-Step $Name
-    & $Command
+    # Native tools (git, gclient, gn, ninja) write progress and warnings to
+    # stderr, and with $ErrorActionPreference = 'Stop' PowerShell 5.1 promotes a
+    # native command's first stderr line to a terminating error even when the
+    # tool succeeded - gclient's "git update is recommended" warning was enough
+    # to abort the sync. The exit code checked below is the real verdict.
+    $previousPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & $Command
+    }
+    finally {
+        $ErrorActionPreference = $previousPreference
+    }
     if ($LASTEXITCODE -ne 0) {
         throw "$Name failed with exit code $LASTEXITCODE."
     }
@@ -171,7 +188,7 @@ function Get-MsvcToolsets([string]$InstallPath) {
 
 # Returns why an installation cannot build WebRTC for this repository, or $null
 # when it can.
-function Get-MsvcToolsetProblem([string]$InstallPath) {
+function Get-MsvcToolsetProblem([string]$InstallPath, [string]$RequiredToolset) {
     if (-not (Test-Path -LiteralPath $InstallPath)) {
         return "Visual Studio was not found at $InstallPath"
     }
@@ -180,18 +197,24 @@ function Get-MsvcToolsetProblem([string]$InstallPath) {
         return ("$InstallPath has no VC\Tools\MSVC\14.* toolset; install the " +
             "'Desktop development with C++' workload")
     }
-    if ($toolset.Toolset -ne $RequiredMsvcToolset) {
+    if ($toolset.Toolset -ne $RequiredToolset) {
         $actual = if ($toolset.Toolset) { $toolset.Toolset } else { 'an unrecognized toolset' }
         return ("$InstallPath would build WebRTC with MSVC $($toolset.Name) ($actual), the " +
-            "highest toolset it has, but the CMake build uses $RequiredMsvcToolset (MSVC " +
-            '14.4x); RLinkAPP would fail to link with unresolved __std_* symbols')
+            "highest toolset it has, but CMakePresets.json pins $RequiredToolset; RLinkAPP " +
+            'would fail to link with unresolved __std_* symbols')
     }
     return $null
 }
 
-# VS2022 installations only: v143 ships with VS2022, and an unrestricted
-# -latest lookup would prefer a newer Visual Studio such as VS 18 (14.51).
-function Get-Vs2022Installations {
+# Installations of the Visual Studio release that ships the required toolset, so
+# the caller can validate them. Returns nothing for a toolset with no known
+# release, which turns into a clear "pass -MsvsPath" failure instead of silently
+# checking unrelated installations.
+function Get-VsInstallations([string]$Toolset) {
+    $release = $VsReleaseByToolset[$Toolset]
+    if (-not $release) {
+        return @()
+    }
     $programFilesX86 = ${env:ProgramFiles(x86)}
     if (-not $programFilesX86) {
         return @()
@@ -200,30 +223,33 @@ function Get-Vs2022Installations {
     if (-not (Test-Path -LiteralPath $vswhere)) {
         return @()
     }
-    $paths = @(& $vswhere -products * -version '[17.0,18.0)' `
+    $range = '[{0}.0,{1}.0)' -f $release, ([int]$release + 1)
+    $paths = @(& $vswhere -products * -version $range `
             -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
             -property installationPath)
     return @($paths | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim() })
 }
 
-# The MSVC version the application side uses: the highest toolset of the
-# instance CMake is configured with (CMakePresets.json pins toolset v143).
-function Get-CmakeMsvcVersion([string]$CacheFile) {
-    if (-not (Test-Path -LiteralPath $CacheFile)) {
-        return $null
+# The toolset CMakePresets.json pins, which is what WebRTC has to match. The
+# build\CMakeCache.txt of a previous configure is deliberately not consulted:
+# WebRTC is prepared before CMake configure runs (BUILDING.md sections 4 and 5),
+# so that cache either does not exist yet or describes an older configuration.
+function Get-RequiredMsvcToolset([string]$PresetsFile) {
+    if (-not (Test-Path -LiteralPath $PresetsFile)) {
+        throw "CMakePresets.json not found at $PresetsFile; cannot tell which toolset WebRTC must use."
     }
-    $instance = Select-String -LiteralPath $CacheFile `
-        -Pattern '^CMAKE_GENERATOR_INSTANCE:INTERNAL=(.+)$' -ErrorAction SilentlyContinue |
-        Select-Object -First 1
-    if (-not $instance) {
-        return $null
+    $presets = Get-Content -LiteralPath $PresetsFile -Raw | ConvertFrom-Json
+    $toolsets = @($presets.configurePresets |
+        ForEach-Object { $_.toolset } |
+        Where-Object { $_ } |
+        ForEach-Object { if ($_ -is [string]) { $_ } else { $_.value } } |
+        Where-Object { $_ } |
+        Select-Object -Unique)
+    if ($toolsets.Count -ne 1) {
+        $found = if ($toolsets.Count -eq 0) { 'none' } else { $toolsets -join ', ' }
+        throw "Expected exactly one toolset in $PresetsFile, found: $found."
     }
-    $toolsets = @(Get-MsvcToolsets $instance.Matches[0].Groups[1].Value.Trim() |
-        Where-Object { $_.Toolset -eq $RequiredMsvcToolset })
-    if ($toolsets.Count -eq 0) {
-        return $null
-    }
-    return $toolsets[0].Version.ToString()
+    return $toolsets[0]
 }
 
 function Get-WebRtcArgs([bool]$IsDebug) {
@@ -308,39 +334,50 @@ if ($longPaths -ne 1) {
         'fails with path-too-long errors.')
 }
 
-# --- toolchain: pin GYP_MSVS_OVERRIDE_PATH to a v143 install -----------------
+# --- toolchain: pin GYP_MSVS_OVERRIDE_PATH to the pinned toolset -------------
 # Resolved before depot_tools so a wrong toolchain fails the run before anything
-# is cloned or synced, and before gn gen writes any file. An explicit -MsvsPath
-# wins and must be usable. An existing GYP_MSVS_OVERRIDE_PATH is only reused when
-# it is usable: a stale value (for example a VS 18 path, whose highest toolset is
-# 14.51) is reported and skipped instead of silently producing a webrtc.lib that
-# cannot link against the v143 application. Only then does vswhere provide
-# candidates, and only VS2022 ones.
+# is cloned or synced, and before gn gen writes any file. Both -MsvsPath and an
+# existing GYP_MSVS_OVERRIDE_PATH are explicit user input and must be usable: a
+# stale GYP_MSVS_OVERRIDE_PATH (for example a VS 18 path, whose highest toolset
+# is 14.51) is an error, not a warning, because ignoring it would silently
+# produce a webrtc.lib that cannot link against the application while the
+# variable keeps misleading the manual gn gen/ninja path. vswhere provides
+# candidates (the required toolset's Visual Studio release only) when neither is
+# set.
 $msvcSource = $null
 $rejected = @()
+$RequiredMsvcToolset = Get-RequiredMsvcToolset (Join-Path $PSScriptRoot '..\CMakePresets.json')
 
 if ($MsvsPath) {
     $msvcSource = '-MsvsPath'
-    $problem = Get-MsvcToolsetProblem $MsvsPath
+    $problem = Get-MsvcToolsetProblem $MsvsPath $RequiredMsvcToolset
     if ($problem) {
-        throw "$problem. Pass -MsvsPath with a VS2022 (v143) installation."
+        throw "$problem. Pass -MsvsPath with a $RequiredMsvcToolset installation."
     }
 }
 elseif ($env:GYP_MSVS_OVERRIDE_PATH) {
-    $problem = Get-MsvcToolsetProblem $env:GYP_MSVS_OVERRIDE_PATH
+    $problem = Get-MsvcToolsetProblem $env:GYP_MSVS_OVERRIDE_PATH $RequiredMsvcToolset
     if ($problem) {
-        Write-Warning "Ignoring GYP_MSVS_OVERRIDE_PATH: $problem."
-        $rejected += $problem
+        $usable = @(foreach ($candidate in @(Get-VsInstallations $RequiredMsvcToolset)) {
+                if (-not (Get-MsvcToolsetProblem $candidate $RequiredMsvcToolset)) { $candidate }
+            })
+        $suggestion = if ($usable.Count -gt 0) {
+            ' A usable installation was detected at: ' + ($usable -join ', ') + '.'
+        }
+        else {
+            ''
+        }
+        throw ("GYP_MSVS_OVERRIDE_PATH is set to $($env:GYP_MSVS_OVERRIDE_PATH) but unusable: " +
+            "$problem.$suggestion Pass -MsvsPath with a usable installation, or clear " +
+            'the variable.')
     }
-    else {
-        $MsvsPath = $env:GYP_MSVS_OVERRIDE_PATH
-        $msvcSource = 'GYP_MSVS_OVERRIDE_PATH'
-    }
+    $MsvsPath = $env:GYP_MSVS_OVERRIDE_PATH
+    $msvcSource = 'GYP_MSVS_OVERRIDE_PATH'
 }
 
 if (-not $MsvsPath) {
-    foreach ($candidate in @(Get-Vs2022Installations)) {
-        $problem = Get-MsvcToolsetProblem $candidate
+    foreach ($candidate in @(Get-VsInstallations $RequiredMsvcToolset)) {
+        $problem = Get-MsvcToolsetProblem $candidate $RequiredMsvcToolset
         if ($problem) {
             $rejected += $problem
             continue
@@ -356,29 +393,15 @@ if (-not $MsvsPath) {
         "Rejected: $($rejected -join '; ')."
     }
     else {
-        'No Visual Studio 2022 installation was detected.'
+        "No installation of the $RequiredMsvcToolset Visual Studio release was detected."
     }
-    throw ("A Visual Studio 2022 installation with the $RequiredMsvcToolset toolset " +
-        "(MSVC 14.4x) is required to build WebRTC (BUILDING.md section 2). " +
+    throw ("A Visual Studio installation with the $RequiredMsvcToolset toolset, which " +
+        "CMakePresets.json pins, is required to build WebRTC (BUILDING.md section 2). " +
         "$detail Pass -MsvsPath or set GYP_MSVS_OVERRIDE_PATH to one and re-run.")
 }
 
 $env:GYP_MSVS_OVERRIDE_PATH = $MsvsPath
 $msvcToolset = @(Get-MsvcToolsets $MsvsPath) | Select-Object -First 1
-
-# Which MSVC version the application is compiled with; a difference is reported
-# rather than treated as fatal.
-if (-not $ExpectedMsvcVersion) {
-    $ExpectedMsvcVersion = Get-CmakeMsvcVersion (Join-Path $PSScriptRoot '..\build\CMakeCache.txt')
-}
-if (-not $ExpectedMsvcVersion) {
-    $ExpectedMsvcVersion = $DefaultMsvcVersion
-}
-if ($msvcToolset.Version.ToString() -ne $ExpectedMsvcVersion) {
-    Write-Warning ("WebRTC will be built with MSVC $($msvcToolset.Name) from $MsvsPath, " +
-        "while the CMake build uses $ExpectedMsvcVersion. Rebuild WebRTC with the same " +
-        'installation if RLinkAPP fails to link.')
-}
 
 # --- depot_tools: reuse and verify, or clone the pinned revision ------------
 if (Test-Path -LiteralPath (Join-Path $DepotTools '.git')) {
@@ -469,6 +492,23 @@ if (-not $SkipFetch) {
         }
         else {
             Write-Warning "Could not find the WebRTC src URL in $GclientFile; relying on --revision for this sync."
+        }
+    }
+
+    # gclient refuses to sync a DEPS-managed repository that has uncommitted
+    # changes, and the /MD patch this script applies to src\build is exactly
+    # that: the patch step below runs after the sync, so a previous run leaves
+    # src\build dirty and every later run would fail here. Restore that one file
+    # before syncing; the patch is re-applied afterwards.
+    $buildRepo = Join-Path $Src 'build'
+    $buildGnRelative = 'config/win/BUILD.gn'
+    if (Test-Path -LiteralPath (Join-Path $buildRepo '.git')) {
+        $dirty = @(& git -C $buildRepo status --porcelain -- $buildGnRelative)
+        if ($dirty) {
+            Write-Step 'Reverting the local /MD patch in src\build before gclient sync'
+            Invoke-Native 'restore src/build/config/win/BUILD.gn' {
+                & git -C $buildRepo checkout -- $buildGnRelative
+            }
         }
     }
 
