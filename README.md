@@ -1,14 +1,20 @@
 # RLink
 
 RLink 是一款面向 Windows 的高性能开源远程桌面与多人协作工具。
-它支持最高 **4K 分辨率、120 FPS** 的桌面共享，在良好的 P2P 网络环境下
-兼顾清晰度与低延迟。用户既可以使用设备 ID 和一次性验证码快速发起远程
-协助，也可以登录同一账户直接访问自己的在线设备；还可以创建或加入多人
-协作房间，进行多人音视频会议、屏幕共享、观看与远程控制，并在成员之间
-接替主屏幕。
+它支持最高 **4K 分辨率、120 FPS** 的桌面共享，在良好的 P2P 网络环境下兼顾清晰度与低延迟。用户既可以使用设备 ID 和一次性验证码快速发起远程协助，也可以登录同一账户直接访问自己的在线设备；还可以创建或加入多人协作房间，进行多人音视频会议、屏幕共享、观看与远程控制，并在成员之间接替主屏幕。
 
-主要使用Qt 6 + libwebrtc + FFmpeg + Windows D3D11/DXGI/Media Foundation，
-除客户端外，提供服务器源码，可自行部署使用。
+RLink is a high-performance, open-source remote desktop and multi-user collaboration tool for Windows.
+It supports desktop sharing at resolutions up to **4K and 120 FPS**, delivering both high visual quality and low latency under good P2P network conditions. Users can quickly start a remote assistance session using a device ID and a one-time verification code, or sign in to the same account to directly access their own online devices. RLink also supports multi-user collaboration rooms for audio/video conferencing, screen sharing, remote viewing and control, as well as switching the active screen-sharing host among participants.
+
+项目主要采用 **Qt 6、libwebrtc、FFmpeg**，并结合 Windows 平台的 **Direct3D 11、DXGI 和 Media Foundation** 等技术实现。用户登录与身份认证由 **Logto** 提供支持。
+
+RLink is primarily built with **Qt 6, libwebrtc, and FFmpeg**, together with Windows technologies including **Direct3D 11, DXGI, and Media Foundation**. User sign-in and authentication are powered by **Logto**.
+
+除客户端源码外，项目同时提供服务器端源码。若不需要登录与身份认证功能，则无需接入 Logto，可直接自行编译并部署信令服务器端程序。
+
+In addition to the client source code, the project also provides the source code for the signaling server. If account-based login and authentication are not required, Logto integration can be omitted, and the signaling server can be built and deployed independently.
+
+
 ## 核心功能
 
 ### 高清远程桌面
