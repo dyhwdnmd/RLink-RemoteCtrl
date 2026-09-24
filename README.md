@@ -7,6 +7,8 @@ RLink 是一款面向 Windows 的高性能开源远程桌面与多人协作工�
 协作房间，进行多人音视频会议、屏幕共享、观看与远程控制，并在成员之间
 接替主屏幕。
 
+主要使用Qt 6 + libwebrtc + FFmpeg + Windows D3D11/DXGI/Media Foundation，
+除客户端外，提供服务器源码，可自行部署使用。
 ## 核心功能
 
 ### 高清远程桌面
