@@ -12,8 +12,8 @@
 
 <!-- These buttons link to a specific release. Update both the tag and asset names when publishing a new version; do not combine a latest URL with a version-specific filename. -->
 <p align="center">
-  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe"><img src="https://img.shields.io/badge/Windows_x64-Download_installer-2563EB?style=for-the-badge" alt="Download Windows x64 installer"></a>
-  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip"><img src="https://img.shields.io/badge/Windows_x64-Download_portable-475569?style=for-the-badge" alt="Download Windows x64 portable ZIP"></a>
+  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe"><img src="https://img.shields.io/badge/Windows_x64-Download_installer-2563EB?style=for-the-badge" alt="Download Windows x64 installer"></a>
+  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip"><img src="https://img.shields.io/badge/Windows_x64-Download_portable-475569?style=for-the-badge" alt="Download Windows x64 portable ZIP"></a>
 </p>
 
 <p align="center">
@@ -30,19 +30,19 @@ RLink is a high-performance, open-source remote desktop and collaboration app fo
 
 ## Download
 
-The download buttons above link to **v0.1.12**. The ready-to-run packages do not require Qt, WebRTC, or a development environment.
+The download buttons above link to **v0.1.13**. The ready-to-run packages do not require Qt, WebRTC, or a development environment.
 
 | Package | Download | Getting started |
 | --- | --- | --- |
-| Windows x64 installer (recommended) | [Download installer](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe) | Run the installer; recommended for regular use and future updates |
-| Windows x64 portable | [Download ZIP](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip) | Extract the entire archive, then run `RLinkAPP.exe`; useful for testing or occasional use |
+| Windows x64 installer (recommended) | [Download installer](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe) | Run the installer; recommended for regular use and future updates |
+| Windows x64 portable | [Download ZIP](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip) | Extract the entire archive, then run `RLinkAPP.exe`; useful for testing or occasional use |
 
 [Latest release and other versions](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases) ·
-[Installer SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe.sha256.txt) ·
-[Portable ZIP SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip.sha256.txt)
+[Installer SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe.sha256.txt) ·
+[Portable ZIP SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip.sha256.txt)
 
 Both packages include the required runtime files. For the portable version, keep the extracted DLLs, plugins, and other files together—do not move the EXE on its own.
-`RLink-Windows-x64-0.1.12.zip` is for automatic updates of existing installations, not portable use. The `Source code` downloads contain source archives, and `RLink-update.json` is the client's update manifest; neither is an installer.
+`RLink-Windows-x64-0.1.13.zip` is for automatic updates of existing installations, not portable use. The `Source code` downloads contain source archives, and `RLink-update.json` is the client's update manifest; neither is an installer.
 
 ### Get started
 

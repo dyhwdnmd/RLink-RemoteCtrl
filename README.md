@@ -12,8 +12,8 @@
 
 <!-- 下载按钮固定到对应 Release。发布新版本时同步更新版本与资产名；不要拼接 latest 与含旧版本号的文件名。 -->
 <p align="center">
-  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe"><img src="https://img.shields.io/badge/Windows_x64-下载安装版-2563EB?style=for-the-badge" alt="下载 Windows x64 安装版"></a>
-  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip"><img src="https://img.shields.io/badge/Windows_x64-下载便携版-475569?style=for-the-badge" alt="下载 Windows x64 便携版"></a>
+  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe"><img src="https://img.shields.io/badge/Windows_x64-下载安装版-2563EB?style=for-the-badge" alt="下载 Windows x64 安装版"></a>
+  <a href="https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip"><img src="https://img.shields.io/badge/Windows_x64-下载便携版-475569?style=for-the-badge" alt="下载 Windows x64 便携版"></a>
 </p>
 
 <p align="center">
@@ -30,19 +30,19 @@ RLink 是一款面向 Windows 的高性能开源远程桌面与多人协作工�
 
 ## 下载
 
-当前下载入口对应 **v0.1.12**。普通用户直接下载安装包，无需准备 Qt、WebRTC 或编译环境。
+当前下载入口对应 **v0.1.13**。普通用户直接下载安装包，无需准备 Qt、WebRTC 或编译环境。
 
 | 版本 | 下载 | 使用方式 |
 | --- | --- | --- |
-| Windows x64 安装版（推荐） | [下载安装程序](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe) | 双击安装，适合长期使用与后续软件更新 |
-| Windows x64 便携版 | [下载 ZIP](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip) | 完整解压后运行 `RLinkAPP.exe`，适合临时使用与测试 |
+| Windows x64 安装版（推荐） | [下载安装程序](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe) | 双击安装，适合长期使用与后续软件更新 |
+| Windows x64 便携版 | [下载 ZIP](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip) | 完整解压后运行 `RLinkAPP.exe`，适合临时使用与测试 |
 
 [查看最新发布与其他版本](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases) ·
-[安装包 SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Setup-0.1.12.exe.sha256.txt) ·
-[便携包 SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.12/RLink-Portable-Windows-x64-0.1.12.zip.sha256.txt)
+[安装包 SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Setup-0.1.13.exe.sha256.txt) ·
+[便携包 SHA-256](https://github.com/dyhwdnmd/RLink-RemoteCtrl/releases/download/v0.1.13/RLink-Portable-Windows-x64-0.1.13.zip.sha256.txt)
 
 安装版和便携版都包含运行所需资源。便携版请保留解压后的 DLL、插件及其他文件，不要单独移动 EXE。
-Release 中的 `RLink-Windows-x64-0.1.12.zip` 供已安装客户端自动更新使用，不是便携包。`Source code` 是源码压缩包，`RLink-update.json` 是客户端更新清单，都不是安装程序。
+Release 中的 `RLink-Windows-x64-0.1.13.zip` 供已安装客户端自动更新使用，不是便携包。`Source code` 是源码压缩包，`RLink-update.json` 是客户端更新清单，都不是安装程序。
 
 ### 开始使用
 
