@@ -944,6 +944,42 @@ bool ControllerMainWindow::RunThemeRoundTripSelfTest(QString* errorMessage)
         }
     }
 
+    // Feedback remains an embedded page, with theme-aware buttons and only
+    // explicit browser navigation (the probe does not open external URLs).
+    bool feedbackPassed = pageStack_ && pageStack_->count() > 6 &&
+        helpNavButton_ && helpNavButton_->text() == QStringLiteral("问题反馈");
+    if (feedbackPassed) {
+        pageStack_->setCurrentIndex(6);
+        auto* feedbackPage = pageStack_->currentWidget();
+        const auto* title = feedbackPage->findChild<QLabel*>(
+            QStringLiteral("pageTitle"));
+        feedbackPassed = title && title->text() == QStringLiteral("问题反馈");
+        for (const auto preference : {ui::ThemePreference::kLight,
+                                      ui::ThemePreference::kDark}) {
+            apply(preference);
+            int matchingButtons = 0;
+            for (auto* button : feedbackPage->findChildren<QPushButton*>()) {
+                const bool correctTarget =
+                    (button->text() == QStringLiteral("提交问题") &&
+                     button->toolTip() == QStringLiteral(
+                         "https://github.com/dyhwdnmd/RLink-RemoteCtrl/issues/new/choose")) ||
+                    (button->text() == QStringLiteral("查看已有问题") &&
+                     button->toolTip() == QStringLiteral(
+                         "https://github.com/dyhwdnmd/RLink-RemoteCtrl/issues"));
+                if (correctTarget && button->isVisibleTo(this) &&
+                    button->isEnabled() && button->height() == 40) ++matchingButtons;
+            }
+            feedbackPassed = feedbackPassed && matchingButtons == 2 &&
+                !feedbackPage->grab().isNull();
+        }
+    }
+    passed = passed && feedbackPassed;
+    QTextStream(stdout) << "FEEDBACK_PAGE_LIGHT_DARK="
+                        << (feedbackPassed ? "PASS" : "FAIL") << '\n';
+    if (!feedbackPassed && errorMessage) {
+        *errorMessage = QStringLiteral("feedback navigation or issue buttons mismatch");
+    }
+
     if (hadOriginal) settings.setValue(key, original);
     else settings.remove(key);
     settings.sync();

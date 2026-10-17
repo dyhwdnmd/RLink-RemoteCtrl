@@ -16,6 +16,7 @@
 #include <sddl.h>
 #include <wrl/client.h>
 #include <vector>
+#include <mutex>
 
 namespace remote::controller::detail {
 extern const char kWindowsAutoStartValueName[];
@@ -23,6 +24,24 @@ namespace {
 using Microsoft::WRL::ComPtr;
 constexpr auto kTaskMarker = "RLink interactive elevated autostart v1";
 constexpr auto kAutoStartChoice = "app/autoStartEnabled";
+constexpr auto kAutoStartArgument = "--autostart";
+// Serialize scheduler changes with preference commits. A manual off choice
+// must not be overwritten by a concurrently finishing first-run initializer.
+std::recursive_mutex kAutoStartOperationMutex;
+
+struct AutoStartInitializationResult { bool enabled; QString error; };
+std::mutex kAutoStartInitializationMutex;
+QFuture<AutoStartInitializationResult> kAutoStartInitializationFuture;
+bool kAutoStartInitializationStarted = false;
+
+QString LegacyAutoStartCommand() {
+    return QStringLiteral("\"%1\"").arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+}
+
+bool MatchesCurrentExecutable(const QString& path) {
+    return QDir::cleanPath(QDir::fromNativeSeparators(path)).compare(
+        QDir::cleanPath(QCoreApplication::applicationFilePath()), Qt::CaseInsensitive) == 0;
+}
 
 bool SaveAutoStartChoice(QSettings& settings, bool enabled, QString* error) {
     settings.setValue(QString::fromLatin1(kAutoStartChoice), enabled);
@@ -33,11 +52,15 @@ bool SaveAutoStartChoice(QSettings& settings, bool enabled, QString* error) {
 }
 
 bool ApplyAutoStartDefault(QSettings& settings,
-    const std::function<bool(bool, QString*)>& configure, QString* error) {
+    const std::function<bool(bool, QString*)>& configure, QString* error,
+    const std::function<bool(QString*)>& migrate = {}) {
     if (error) error->clear();
     // An explicit false is different from a missing preference. Apply the
     // default once, and retry on a later launch if task registration failed.
-    if (settings.contains(QString::fromLatin1(kAutoStartChoice))) return true;
+    if (settings.contains(QString::fromLatin1(kAutoStartChoice))) {
+        return !settings.value(QString::fromLatin1(kAutoStartChoice)).toBool() ||
+               !migrate || migrate(error);
+    }
     if (!configure(true, error)) return false;
     return SaveAutoStartChoice(settings, true, error);
 }
@@ -151,6 +174,7 @@ QString TaskXml(const QString& sid) {
     out.writeAttribute(QStringLiteral("Context"), QStringLiteral("CurrentUser"));
     out.writeStartElement(QStringLiteral("Exec"));
     out.writeTextElement(QStringLiteral("Command"), QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+    out.writeTextElement(QStringLiteral("Arguments"), QString::fromLatin1(kAutoStartArgument));
     out.writeTextElement(QStringLiteral("WorkingDirectory"), QDir::toNativeSeparators(QCoreApplication::applicationDirPath()));
     out.writeEndElement(); out.writeEndElement(); out.writeEndElement();
     out.writeEndDocument();
@@ -178,7 +202,30 @@ bool OwnedTask(IRegisteredTask* task, const QString& sid) {
     return !in.hasError() && marker && user;
 }
 
-bool ActiveTask(IRegisteredTask* task, bool requireEnabled = true) {
+// Automatic defaults/migration must not repoint another installation's task.
+// Explicit user changes can still update the task after moving the EXE.
+bool CurrentInstallationTask(IRegisteredTask* task) {
+    ComPtr<ITaskDefinition> definition;
+    ComPtr<IActionCollection> actions;
+    ComPtr<IAction> action;
+    ComPtr<IExecAction> exec;
+    LONG count = 0;
+    if (FAILED(task->get_Definition(&definition)) ||
+        FAILED(definition->get_Actions(&actions)) || FAILED(actions->get_Count(&count)) || count != 1 ||
+        FAILED(actions->get_Item(1, &action)) || FAILED(action.As(&exec))) return false;
+    BSTR raw = nullptr;
+    if (FAILED(exec->get_Path(&raw))) return false;
+    const bool current = MatchesCurrentExecutable(QString::fromWCharArray(raw));
+    SysFreeString(raw);
+    if (!current) return false;
+    BSTR arguments = nullptr;
+    if (FAILED(exec->get_Arguments(&arguments))) return false;
+    const QString text = QString::fromWCharArray(arguments);
+    SysFreeString(arguments);
+    return text.isEmpty() || text == QString::fromLatin1(kAutoStartArgument);
+}
+
+bool ActiveTask(IRegisteredTask* task, bool requireEnabled = true, bool legacyArguments = false) {
     VARIANT_BOOL enabled = VARIANT_FALSE;
     if (FAILED(task->get_Enabled(&enabled)) || (requireEnabled && enabled != VARIANT_TRUE)) return false;
     ComPtr<ITaskDefinition> definition;
@@ -208,14 +255,14 @@ bool ActiveTask(IRegisteredTask* task, bool requireEnabled = true) {
     if (!correctUser) return false;
     BSTR arguments = nullptr;
     if (FAILED(exec->get_Arguments(&arguments))) return false;
-    const bool noArguments = !arguments || SysStringLen(arguments) == 0;
+    const QString argumentText = QString::fromWCharArray(arguments);
     SysFreeString(arguments);
-    if (!noArguments) return false;
+    if (argumentText != (legacyArguments ? QString() : QString::fromLatin1(kAutoStartArgument))) return false;
     BSTR raw = nullptr;
     if (FAILED(exec->get_Path(&raw))) return false;
-    const QString path = QDir::fromNativeSeparators(QString::fromWCharArray(raw));
+    const QString path = QString::fromWCharArray(raw);
     SysFreeString(raw);
-    return QDir::cleanPath(path).compare(QDir::cleanPath(QCoreApplication::applicationFilePath()), Qt::CaseInsensitive) == 0;
+    return MatchesCurrentExecutable(path);
 }
 
 bool Failed(QString* error, const QString& stage, HRESULT hr) {
@@ -230,13 +277,45 @@ bool Failed(QString* error, const QString& stage, HRESULT hr) {
     }
     return false;
 }
+
+bool MigrateBackgroundAutoStart(QString* error) {
+    const QString sid = CurrentUserSid();
+    if (sid.isEmpty()) return Failed(error, QStringLiteral("读取当前账户身份失败"), E_FAIL);
+    TaskConnection connection;
+    HRESULT hr = connection.Open();
+    if (FAILED(hr)) return Failed(error, QStringLiteral("连接 Windows 任务计划程序失败"), hr);
+    ComPtr<IRegisteredTask> task;
+    hr = connection.folder->GetTask(Bstr(TaskName(sid)), &task);
+    if (MissingTask(hr)) return true;
+    if (FAILED(hr)) return Failed(error, QStringLiteral("读取启动任务失败"), hr);
+    // Never recreate deleted/disabled tasks or repoint another installation.
+    // Re-register only an enabled, fully validated legacy definition.
+    if (!OwnedTask(task.Get(), sid) || !CurrentInstallationTask(task.Get()) ||
+        !ActiveTask(task.Get(), true, true)) return true;
+    return SetWindowsAutoStartEnabled(true, error);
+}
+
+bool ConfigureAutoStartDefault(bool enabled, QString* error) {
+    const QString sid = CurrentUserSid();
+    if (sid.isEmpty()) return Failed(error, QStringLiteral("读取当前账户身份失败"), E_FAIL);
+    TaskConnection connection;
+    HRESULT hr = connection.Open();
+    if (FAILED(hr)) return Failed(error, QStringLiteral("连接 Windows 任务计划程序失败"), hr);
+    ComPtr<IRegisteredTask> task;
+    hr = connection.folder->GetTask(Bstr(TaskName(sid)), &task);
+    if (FAILED(hr) && !MissingTask(hr)) return Failed(error, QStringLiteral("读取启动任务失败"), hr);
+    if (task && (!OwnedTask(task.Get(), sid) || !CurrentInstallationTask(task.Get())))
+        return Failed(error, QStringLiteral("已有启动任务属于其他安装，默认设置未改动"), E_ACCESSDENIED);
+    return SetWindowsAutoStartEnabled(enabled, error);
+}
 } // namespace
 
 QString WindowsAutoStartCommand() {
-    return QStringLiteral("\"%1\"").arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+    return LegacyAutoStartCommand() + QStringLiteral(" ") + QString::fromLatin1(kAutoStartArgument);
 }
 
 bool WindowsAutoStartEnabled() {
+    const std::lock_guard lock(kAutoStartOperationMutex);
     const QString sid = CurrentUserSid();
     if (sid.isEmpty()) return false;
     TaskConnection connection;
@@ -247,6 +326,7 @@ bool WindowsAutoStartEnabled() {
 }
 
 bool SetWindowsAutoStartEnabled(bool enabled, QString* error) {
+    const std::lock_guard lock(kAutoStartOperationMutex);
     if (error) error->clear();
     const QString sid = CurrentUserSid();
     if (sid.isEmpty()) return Failed(error, QStringLiteral("读取当前账户身份失败"), E_FAIL);
@@ -273,7 +353,8 @@ bool SetWindowsAutoStartEnabled(bool enabled, QString* error) {
     // succeeded. Do not remove another installation's autostart entry.
     QSettings runKey(QStringLiteral("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"), QSettings::NativeFormat);
     const QString name = QString::fromLatin1(kWindowsAutoStartValueName);
-    if (runKey.value(name).toString() == WindowsAutoStartCommand()) {
+    const QString runCommand = runKey.value(name).toString();
+    if (runCommand == LegacyAutoStartCommand() || runCommand == WindowsAutoStartCommand()) {
         runKey.remove(name);
         runKey.sync();
         if (runKey.status() != QSettings::NoError)
@@ -295,20 +376,39 @@ void QueryWindowsAutoStartAsync(QObject* context, std::function<void(bool)> comp
 
 void InitializeWindowsAutoStartAsync(QObject* context,
     std::function<void(bool, QString)> completed) {
-    struct Result { bool enabled; QString error; };
-    auto* watcher = new QFutureWatcher<Result>(context);
-    QObject::connect(watcher, &QFutureWatcher<Result>::finished, context,
+    QFuture<AutoStartInitializationResult> future;
+    bool alreadyFinished = false;
+    {
+        const std::lock_guard lock(kAutoStartInitializationMutex);
+        if (!kAutoStartInitializationStarted) {
+            kAutoStartInitializationFuture = QtConcurrent::run([] {
+                const std::lock_guard operationLock(kAutoStartOperationMutex);
+                QSettings settings;
+                QString error;
+                ApplyAutoStartDefault(settings, ConfigureAutoStartDefault, &error, MigrateBackgroundAutoStart);
+                return AutoStartInitializationResult{WindowsAutoStartEnabled(), error};
+            });
+            kAutoStartInitializationStarted = true;
+        } else {
+            alreadyFinished = kAutoStartInitializationFuture.isFinished();
+        }
+        future = kAutoStartInitializationFuture;
+    }
+    if (alreadyFinished) {
+        // Settings may be opened after the user changed the choice. Re-query
+        // instead of replaying the initial result or reapplying the default.
+        QueryWindowsAutoStartAsync(context,
+            [completed = std::move(completed)](bool enabled) { completed(enabled, {}); });
+        return;
+    }
+    auto* watcher = new QFutureWatcher<AutoStartInitializationResult>(context);
+    QObject::connect(watcher, &QFutureWatcher<AutoStartInitializationResult>::finished, context,
         [watcher, completed = std::move(completed)] {
             const auto result = watcher->result();
             watcher->deleteLater();
             completed(result.enabled, result.error);
         });
-    watcher->setFuture(QtConcurrent::run([] {
-        QSettings settings;
-        QString error;
-        ApplyAutoStartDefault(settings, SetWindowsAutoStartEnabled, &error);
-        return Result{WindowsAutoStartEnabled(), error};
-    }));
+    watcher->setFuture(future);
 }
 
 void SetWindowsAutoStartAsync(bool enabled, QObject* context,
@@ -322,6 +422,7 @@ void SetWindowsAutoStartAsync(bool enabled, QObject* context,
             completed(result.success, result.enabled, result.error);
         });
     watcher->setFuture(QtConcurrent::run([enabled] {
+        const std::lock_guard operationLock(kAutoStartOperationMutex);
         QString error;
         bool success = SetWindowsAutoStartEnabled(enabled, &error);
         const bool actualEnabled = WindowsAutoStartEnabled();

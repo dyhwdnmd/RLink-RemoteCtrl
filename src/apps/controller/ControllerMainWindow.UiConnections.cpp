@@ -51,8 +51,8 @@ void ControllerMainWindow::BuildHelpAndAuthorPages()
 {
     QVBoxLayout* helpPageLayout = nullptr;
     auto* helpPage = MakePageSurface(
-        QStringLiteral("帮助与反馈"),
-        QStringLiteral("了解连接方式，或在遇到问题时快速定位原因。"),
+        QStringLiteral("问题反馈"),
+        QStringLiteral("遇到问题或有改进建议，欢迎到 GitHub 提交 Issue。"),
         pageStack_, &helpPageLayout);
     auto* helpCard = new QFrame(helpPage);
     helpCard->setProperty("card", true);
@@ -60,16 +60,52 @@ void ControllerMainWindow::BuildHelpAndAuthorPages()
     helpLayout->setContentsMargins(22, 20, 22, 20);
     helpLayout->setSpacing(10);
     auto* helpTitle = new QLabel(
-        QStringLiteral("连接说明"), helpCard);
+        QStringLiteral("GitHub Issues"), helpCard);
     helpTitle->setObjectName(QStringLiteral("cardTitle"));
     helpLayout->addWidget(helpTitle);
     auto* helpText = new QLabel(
         QStringLiteral(
-            "双方先通过 WSS 完成设备与房间协调，屏幕、摄像头、语音、输入和文件数据随后通过 WebRTC P2P 传输。"),
+            "反馈前可以先查看已有问题。提交时请附上软件版本、问题描述和截图。"),
         helpCard);
     helpText->setProperty("muted", true);
     helpText->setWordWrap(true);
     helpLayout->addWidget(helpText);
+    auto* feedbackActions = new QHBoxLayout();
+    feedbackActions->setSpacing(12);
+    auto* submitIssueButton = new QPushButton(
+        QStringLiteral("提交问题"), helpCard);
+    submitIssueButton->setObjectName(QStringLiteral("primaryButton"));
+    submitIssueButton->setCursor(Qt::PointingHandCursor);
+    submitIssueButton->setFixedHeight(40);
+    const QUrl newIssueUrl(QStringLiteral(
+        "https://github.com/dyhwdnmd/RLink-RemoteCtrl/issues/new/choose"));
+    submitIssueButton->setToolTip(newIssueUrl.toString());
+    feedbackActions->addWidget(submitIssueButton);
+    auto* viewIssuesButton = new QPushButton(
+        QStringLiteral("查看已有问题"), helpCard);
+    viewIssuesButton->setObjectName(QStringLiteral("softButton"));
+    viewIssuesButton->setCursor(Qt::PointingHandCursor);
+    viewIssuesButton->setFixedHeight(40);
+    const QUrl issuesUrl(QStringLiteral(
+        "https://github.com/dyhwdnmd/RLink-RemoteCtrl/issues"));
+    viewIssuesButton->setToolTip(issuesUrl.toString());
+    feedbackActions->addWidget(viewIssuesButton);
+    feedbackActions->addStretch(1);
+    helpLayout->addSpacing(6);
+    helpLayout->addLayout(feedbackActions);
+    const auto openFeedbackUrl = [this](const QUrl& url) {
+        if (!QDesktopServices::openUrl(url)) {
+            RemoteCDialog::Alert(
+                this, QStringLiteral("无法打开浏览器"),
+                QStringLiteral("请在浏览器中打开以下地址：\n%1")
+                    .arg(url.toString()),
+                QStringLiteral("知道了"), RemoteCDialog::Tone::kWarning);
+        }
+    };
+    connect(submitIssueButton, &QPushButton::clicked, this,
+            [openFeedbackUrl, newIssueUrl] { openFeedbackUrl(newIssueUrl); });
+    connect(viewIssuesButton, &QPushButton::clicked, this,
+            [openFeedbackUrl, issuesUrl] { openFeedbackUrl(issuesUrl); });
     helpPageLayout->addWidget(helpCard);
     helpPageLayout->addStretch(1);
     pageStack_->addWidget(helpPage);
@@ -307,7 +343,7 @@ void ControllerMainWindow::ConnectUiSignals()
         }
     });
     connect(helpNavButton_, &QPushButton::clicked, this, [this] {
-        SelectMainPage(6, helpNavButton_, QStringLiteral("帮助与反馈"));
+        SelectMainPage(6, helpNavButton_, QStringLiteral("问题反馈"));
     });
     connect(authorNavButton_, &QPushButton::clicked, this, [this] {
         SelectMainPage(7, authorNavButton_, QStringLiteral("找到作者"));

@@ -80,12 +80,98 @@
 #include "src/apps/controller/ControllerMainWindowSupport.h"
 #include "src/apps/controller/ui/RemoteCTheme.h"
 #include "src/apps/controller/RemoteCDialog.h"
+#include "src/apps/controller/WindowsAutoStart.h"
+#include "src/apps/controller/LoginWindow.h"
 #include "src/apps/remote/RemoteCApplicationCoordinator.h"
 #include "src/apps/remote/adapters/VisionApiFrameAnalyzer.h"
 #include "src/auth/AuthConfig.h"
 #include "src/core/ScreenStreamPolicy.h"
 #include "src/auth/DpapiTokenStore.h"
 #include "src/signaling/QtWebSocketSignalingClient.h"
+
+namespace remote::app {
+
+// Test-only entry, invoked only by --auth-coordinator-self-test. All stores and
+// settings are isolated; failure injection never reaches a real OAuth service.
+class StartupAuthenticationProbe final {
+public:
+    static bool VerifyRetry(RemoteCApplicationCoordinator& coordinator,
+                            int& loadCalls) {
+        QSettings settings;
+        settings.setValue(QStringLiteral("auth/accountLabel"),
+                          QStringLiteral("retry-test-account"));
+        coordinator.startupAuthenticationPending_ = true;
+        const auth::AuthError temporaryFailure{
+            auth::AuthErrorCode::kDiscoveryFailed,
+            QStringLiteral("isolated temporary failure"), true};
+        coordinator.HandleAuthFailure(temporaryFailure);
+        const bool firstRetry = coordinator.startupAuthenticationPending_ &&
+            coordinator.authenticationRetryTimer_.isActive() &&
+            coordinator.authenticationRetryTimer_.interval() == 5000 &&
+            settings.value(QStringLiteral("auth/accountLabel")).toString() ==
+                QStringLiteral("retry-test-account") &&
+            !coordinator.mainWindow_->isVisible() &&
+            !coordinator.loginWindow_->isVisible();
+        for (int i = 0; i < 8; ++i) {
+            coordinator.HandleAuthFailure(temporaryFailure);
+        }
+        const bool cappedRetry =
+            coordinator.authenticationRetryTimer_.interval() == 60000 &&
+            coordinator.authenticationRetryAttempt_ == 4;
+        const int previousLoads = loadCalls;
+        coordinator.authenticationRetryTimer_.start(0);
+        QEventLoop loop;
+        QTimer::singleShot(20, &loop, &QEventLoop::quit);
+        loop.exec();
+        const bool retriedRestore = loadCalls == previousLoads + 1 &&
+            !coordinator.startupAuthenticationPending_ &&
+            !coordinator.authenticationRetryTimer_.isActive() &&
+            !coordinator.mainWindow_->isVisible() &&
+            !coordinator.loginWindow_->isVisible();
+
+        // The UI's real cancel callback must invalidate a scheduled retry.
+        coordinator.startupAuthenticationPending_ = true;
+        coordinator.HandleAuthFailure(temporaryFailure);
+        bool cancelClicked = false;
+        for (auto* button : coordinator.loginWindow_->findChildren<QPushButton*>()) {
+            if (button->text() == QStringLiteral("取消当前操作")) {
+                button->click();
+                cancelClicked = true;
+                break;
+            }
+        }
+        const bool cancelled = cancelClicked &&
+            !coordinator.startupAuthenticationPending_ &&
+            !coordinator.authenticationRetryTimer_.isActive();
+
+        coordinator.startupAuthenticationPending_ = true;
+        coordinator.HandleAuthFailure(temporaryFailure);
+        coordinator.HandleAuthFailure({auth::AuthErrorCode::kRefreshRejected,
+            QStringLiteral("isolated invalid credentials"), false});
+        const bool permanentStops = !coordinator.startupAuthenticationPending_ &&
+            !coordinator.authenticationRetryTimer_.isActive() &&
+            !settings.contains(QStringLiteral("auth/accountLabel")) &&
+            !coordinator.loginWindow_->isVisible();
+
+        // A routine refresh failure must also restore from the store instead
+        // of attempting RefreshAccessToken while AuthManager is in kError.
+        coordinator.authenticated_ = true;
+        coordinator.HandleAuthFailure(temporaryFailure);
+        const bool refreshRetry = coordinator.authenticationRetryTimer_.isActive();
+        const int previousRefreshLoads = loadCalls;
+        coordinator.authenticationRetryTimer_.start(0);
+        QEventLoop refreshLoop;
+        QTimer::singleShot(20, &refreshLoop, &QEventLoop::quit);
+        refreshLoop.exec();
+        const bool refreshRestored = loadCalls == previousRefreshLoads + 1 &&
+            !coordinator.authenticated_ &&
+            !coordinator.authenticationRetryTimer_.isActive();
+        return firstRetry && cappedRetry && retriedRestore && cancelled &&
+            permanentStops && refreshRetry && refreshRestored;
+    }
+};
+
+}  // namespace remote::app
 
 namespace {
 
@@ -1597,7 +1683,7 @@ int RunAuthCoordinatorSelfTest()
     };
 
     const auto verifyEarlyRestore = [](
-        remote::auth::TokenStoreLoadStatus status) {
+        remote::auth::TokenStoreLoadStatus status, bool background = false) {
         QSettings settings;
         settings.setValue(QStringLiteral("auth/accountLabel"),
                           QStringLiteral("isolated self-test account"));
@@ -1610,6 +1696,8 @@ int RunAuthCoordinatorSelfTest()
         remote::app::InProcessSessionEngine* engine = nullptr;
         remote::app::RemoteCApplicationCoordinator::Options restoreOptions;
         restoreOptions.authenticationRequired = true;
+        restoreOptions.backgroundStartup = background;
+        restoreOptions.startMainWindowInTray = background;
         restoreOptions.authConfig.issuer = QUrl(
             QStringLiteral("https://example.invalid"));
         restoreOptions.authConfig.clientId = QStringLiteral("selftest");
@@ -1635,6 +1723,13 @@ int RunAuthCoordinatorSelfTest()
             },
             std::make_unique<StartupTokenStore>(status, &loadCalls));
         const bool restoreStarted = restoreCoordinator.Start();
+        bool noStartupSplash = true;
+        if (background) {
+            for (QWidget* widget : QApplication::allWidgets()) {
+                if (widget->objectName() == QStringLiteral("loginStatusWindow") &&
+                    widget->isVisible()) noStartupSplash = false;
+            }
+        }
         const bool restorationPrecedesUi = loadCalls == 1 && factoryCalls == 0;
         const bool synchronousFailureDeferred = settings.contains(
             QStringLiteral("auth/accountLabel"));
@@ -1664,19 +1759,37 @@ int RunAuthCoordinatorSelfTest()
         const bool engineStopped = engine &&
             engine->Snapshot().state == remote::SessionEngineState::kStopped &&
             tokenUpdates == 0;
-        return restoreStarted && restorationPrecedesUi &&
+        const bool visibilityCorrect = mainWindow && restoredLogin &&
+            mainWindow->isVisible() != background &&
+            restoredLogin->isVisible() != background;
+        bool retryPassed = true;
+        bool manualActivationPassed = true;
+        if (background && !errorExpected) {
+            retryPassed = remote::app::StartupAuthenticationProbe::VerifyRetry(
+                restoreCoordinator, loadCalls);
+        }
+        if (background) {
+            restoreCoordinator.ActivateFromExternalLaunch();
+            manualActivationPassed = mainWindow && mainWindow->isVisible();
+        }
+        return restoreStarted && restorationPrecedesUi && noStartupSplash &&
             synchronousFailureDeferred && storeLoadedBeforeFactory &&
-            factoryCalls == 1 && mainWindow && mainWindow->isVisible() &&
-            restoredLogin && restoredLogin->isVisible() && correctLoginState &&
-            accountSettingsCorrect && engineStopped;
+            factoryCalls == 1 && visibilityCorrect && correctLoginState &&
+            accountSettingsCorrect && engineStopped && retryPassed &&
+            manualActivationPassed;
     };
     const bool missingCredentialsPassed = verifyEarlyRestore(
         remote::auth::TokenStoreLoadStatus::kNotFound);
     const bool unreadableCredentialsPassed = verifyEarlyRestore(
         remote::auth::TokenStoreLoadStatus::kError);
+    const bool backgroundMissingPassed = verifyEarlyRestore(
+        remote::auth::TokenStoreLoadStatus::kNotFound, true);
+    const bool backgroundUnreadablePassed = verifyEarlyRestore(
+        remote::auth::TokenStoreLoadStatus::kError, true);
     const bool passed = started && loginWindowCreated &&
         mainWindowCreatedAfterStartupYield && loginWindowAcceptsApplicationExit &&
-        missingCredentialsPassed && unreadableCredentialsPassed;
+        missingCredentialsPassed && unreadableCredentialsPassed &&
+        backgroundMissingPassed && backgroundUnreadablePassed;
     QTextStream output(stdout);
     output << "AUTH_LOGIN_WINDOW="
            << (loginWindowCreated ? "PASS" : "FAIL") << Qt::endl;
@@ -1692,6 +1805,10 @@ int RunAuthCoordinatorSelfTest()
            << (unreadableCredentialsPassed ? "PASS" : "FAIL") << Qt::endl;
     output << "AUTH_COORDINATOR_SELF_TEST="
            << (passed ? "PASS" : "FAIL") << Qt::endl;
+    output << "AUTH_BACKGROUND_STARTUP_AND_RETRY="
+           << (backgroundMissingPassed ? "PASS" : "FAIL") << Qt::endl;
+    output << "AUTH_BACKGROUND_PERMANENT_FAILURE="
+           << (backgroundUnreadablePassed ? "PASS" : "FAIL") << Qt::endl;
     return passed ? 0 : 1;
 }
 
@@ -1789,6 +1906,8 @@ int main(int argc, char* argv[])
 
     QLocalServer singleInstanceServer;
     ScopedWinHandle singleInstanceMutex;
+    const bool backgroundStartup = application.arguments().contains(
+        QStringLiteral("--autostart"));
     if (!IsUtilityInvocation(application.arguments())) {
         const QString serverName = SingleInstanceServerName();
         SetLastError(ERROR_SUCCESS);
@@ -1804,6 +1923,8 @@ int main(int argc, char* argv[])
         }
 
         if (GetLastError() == ERROR_ALREADY_EXISTS) {
+            // An automatic second launch must not raise the existing client.
+            if (backgroundStartup) return 0;
             // The primary process may still be creating its local IPC server.
             // Give it a short time to become ready, but never allow this
             // secondary process to continue into normal application startup.
@@ -2666,6 +2787,9 @@ int main(int argc, char* argv[])
 
     // Set only for normal primary-client startup, after all isolated self-tests.
     application.setProperty("remoteCInitializeAutoStartDefault", true);
+    application.setProperty("remoteCBackgroundStartup", backgroundStartup);
+    remote::controller::detail::InitializeWindowsAutoStartAsync(
+        &application, [](bool, QString) {});
     const StartupSignalingConfiguration startupConfiguration =
         LoadStartupSignalingConfiguration();
     if (!startupConfiguration.sslBackend.isEmpty() &&
@@ -2682,7 +2806,8 @@ int main(int argc, char* argv[])
     remote::app::RemoteCApplicationCoordinator::Options coordinatorOptions;
     coordinatorOptions.authenticationRequired =
         startupConfiguration.authenticationRequired;
-    coordinatorOptions.startMainWindowInTray = startInTray;
+    coordinatorOptions.startMainWindowInTray = startInTray || backgroundStartup;
+    coordinatorOptions.backgroundStartup = backgroundStartup;
     coordinatorOptions.authConfig = startupConfiguration.authConfig;
     coordinatorOptions.configurationError = startupConfiguration.error;
     coordinatorOptions.configurationSource = startupConfiguration.source;

@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 
 #include <functional>
 #include <memory>
@@ -38,6 +39,7 @@ public:
     struct Options {
         bool authenticationRequired = false;
         bool startMainWindowInTray = false;
+        bool backgroundStartup = false;
         auth::AuthConfig authConfig;
         QString configurationError;
         QString configurationSource;
@@ -68,9 +70,13 @@ public:
     void ActivateFromExternalLaunch();
 
 private:
+    friend class StartupAuthenticationProbe;
     void EnsureLoginWindow();
     void EnsureLoginStatusWindow();
     void BeginStartupAuthentication();
+    void RestoreSavedSession();
+    void StopAuthenticationRetry();
+    bool ShouldKeepStartupHidden() const;
     void ContinueAuthenticatedStartup();
     void DispatchAuthCallback(std::function<void()> callback);
     void ShowAccountWindow();
@@ -100,6 +106,10 @@ private:
     bool interactiveLoginRequested_ = false;
     bool startupAuthenticationPending_ = false;
     bool startupUiReady_ = false;
+    bool startupVisibilityRequested_ = false;
+    bool exiting_ = false;
+    QTimer authenticationRetryTimer_;
+    int authenticationRetryAttempt_ = 0;
     QString startupAuthConfigurationError_;
     std::vector<std::function<void()>> deferredStartupAuthCallbacks_;
     bool authenticated_ = false;

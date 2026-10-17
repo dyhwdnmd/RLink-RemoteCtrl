@@ -103,7 +103,7 @@ void ControllerMainWindow::BuildShellAndRoomPage()
     settingsNavButton_ = MakeNavigationButton(
         QStringLiteral("设置"), NavigationIcon::kSettings, false, sidebar);
     helpNavButton_ = MakeNavigationButton(
-        QStringLiteral("帮助与反馈"), NavigationIcon::kHelp, false, sidebar);
+        QStringLiteral("问题反馈"), NavigationIcon::kHelp, false, sidebar);
     authorNavButton_ = MakeNavigationButton(
         QStringLiteral("找到作者"), NavigationIcon::kAuthor, false, sidebar);
     sidebarLayout->addWidget(settingsNavButton_);

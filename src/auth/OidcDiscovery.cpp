@@ -32,6 +32,27 @@ bool IsSecureEndpoint(const QUrl& url) {
            !url.host().isEmpty() && !url.hasFragment();
 }
 
+bool IsTransientDiscoveryNetworkError(QNetworkReply::NetworkError error) {
+    switch (error) {
+        case QNetworkReply::ConnectionRefusedError:
+        case QNetworkReply::RemoteHostClosedError:
+        case QNetworkReply::HostNotFoundError:
+        case QNetworkReply::TimeoutError:
+        case QNetworkReply::TemporaryNetworkFailureError:
+        case QNetworkReply::NetworkSessionFailedError:
+        case QNetworkReply::ProxyConnectionRefusedError:
+        case QNetworkReply::ProxyConnectionClosedError:
+        case QNetworkReply::ProxyNotFoundError:
+        case QNetworkReply::ProxyTimeoutError:
+        case QNetworkReply::UnknownNetworkError:
+            return true;
+        default:
+            // TLS failures, cancellation and authentication errors require
+            // intervention; retrying must not weaken those checks.
+            return false;
+    }
+}
+
 bool StringArrayContains(const QJsonValue& value, const QString& expected) {
     if (!value.isArray()) {
         return false;
@@ -104,10 +125,15 @@ void OidcDiscovery::Discover(
         reply->deleteLater();
 
         if (networkError != QNetworkReply::NoError) {
+            // Qt also maps HTTP failures to NetworkError. Prefer the provider's
+            // HTTP status so a permanent 4xx is not retried as a lost network.
+            const bool transient = status == 429 || status >= 500 ||
+                (status == 0 &&
+                 IsTransientDiscoveryNetworkError(networkError));
             Finish(false, {},
                    QStringLiteral("OIDC discovery request failed: %1")
                        .arg(networkMessage),
-                   true);
+                   transient);
             return;
         }
         if (status != 200 || body.size() > kMaximumDiscoveryBytes) {

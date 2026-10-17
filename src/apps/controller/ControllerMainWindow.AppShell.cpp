@@ -222,7 +222,11 @@ void ControllerMainWindow::StopAccountMenuMotion()
 
 void ControllerMainWindow::BuildSystemTray()
 {
-    if (!QSystemTrayIcon::isSystemTrayAvailable()) {
+    // At Windows logon Explorer may not have created the tray yet. Keep a
+    // visible tray object for background startup; Qt adds it when the tray
+    // becomes available, without needing to expose the main window.
+    if (!QSystemTrayIcon::isSystemTrayAvailable() &&
+        !qApp->property("remoteCBackgroundStartup").toBool()) {
         return;
     }
     trayIcon_ = new QSystemTrayIcon(CreateRemoteCIcon(), this);

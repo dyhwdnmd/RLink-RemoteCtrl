@@ -211,6 +211,11 @@ void AuthManager::Cancel() {
     operationTimer_.stop();
     refreshTimer_.stop();
     discovery_.Cancel();
+    if (flow_) {
+        // A cancelled flow can deliver deferred signals after the next restore
+        // starts. BuildFlow reconnects a fresh flow for that new operation.
+        disconnect(flow_.get(), nullptr, this, nullptr);
+    }
     AbortOutstandingNetworkReplies();
     CloseCallbackListener();
     expectedState_.clear();
@@ -344,6 +349,11 @@ void AuthManager::BuildFlow() {
                 const bool invalidGrant =
                     error.compare(QStringLiteral("invalid_grant"),
                                   Qt::CaseInsensitive) == 0;
+                const bool transient =
+                    error.compare(QStringLiteral("temporarily_unavailable"),
+                                  Qt::CaseInsensitive) == 0 ||
+                    error.compare(QStringLiteral("server_error"),
+                                  Qt::CaseInsensitive) == 0;
                 if (invalidGrant && tokenStore_) {
                     tokenStore_->Clear(nullptr);
                 }
@@ -355,7 +365,7 @@ void AuthManager::BuildFlow() {
                          ? QStringLiteral("Logto rejected the OAuth request: %1")
                                .arg(error)
                          : description,
-                     false);
+                     transient);
             });
 }
 

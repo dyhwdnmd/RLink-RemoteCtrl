@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QWindow>
 
+#include <algorithm>
 #include <utility>
 
 #include "src/apps/controller/ControllerMainWindow.h"
@@ -69,7 +70,16 @@ RemoteCApplicationCoordinator::RemoteCApplicationCoordinator(
     : QObject(parent),
       options_(std::move(options)),
       mainWindowFactory_(std::move(mainWindowFactory)) {
+    authenticationRetryTimer_.setSingleShot(true);
+    connect(&authenticationRetryTimer_, &QTimer::timeout, this, [this] {
+        if (!exiting_ && !interactiveLoginRequested_ && authManager_ &&
+            (startupAuthenticationPending_ || authenticated_)) {
+            RestoreSavedSession();
+        }
+    });
     connect(qApp, &QCoreApplication::aboutToQuit, this, [this] {
+        exiting_ = true;
+        StopAuthenticationRetry();
         if (mainWindow_) {
             mainWindow_->PrepareForApplicationExit();
         }
@@ -100,7 +110,9 @@ bool RemoteCApplicationCoordinator::Start() {
     loginStatusWindow_->SetAccountLabel(settings.value(
         QStringLiteral("auth/accountLabel"),
         QStringLiteral("RLink 账户")).toString());
-    loginStatusWindow_->ShowAndActivate();
+    if (!ShouldKeepStartupHidden()) {
+        loginStatusWindow_->ShowAndActivate();
+    }
     BeginStartupAuthentication();
     QTimer::singleShot(50, this, [this] {
         ContinueAuthenticatedStartup();
@@ -109,11 +121,13 @@ bool RemoteCApplicationCoordinator::Start() {
 }
 
 void RemoteCApplicationCoordinator::ContinueAuthenticatedStartup() {
+    if (exiting_) return;
     if (!CreateMainWindow({})) {
         // Discard early results and stop restoration before reporting a UI
         // construction failure. Cancel() can synchronously emit signed-out.
         deferredStartupAuthCallbacks_.clear();
         startupAuthenticationPending_ = false;
+        StopAuthenticationRetry();
         if (authManager_) {
             authManager_->SetCallbacks({});
             authManager_->Cancel();
@@ -124,7 +138,7 @@ void RemoteCApplicationCoordinator::ContinueAuthenticatedStartup() {
         EnsureLoginWindow();
         loginWindow_->ShowError(
             QStringLiteral("RLink 主窗口初始化失败。"), false);
-        loginWindow_->ShowAndActivate();
+        if (!ShouldKeepStartupHidden()) loginWindow_->ShowAndActivate();
         return;
     }
     EnsureLoginWindow();
@@ -140,7 +154,7 @@ void RemoteCApplicationCoordinator::ContinueAuthenticatedStartup() {
                      options_.configurationSource),
             false);
         ShowMainWindowAfterStartup();
-        loginWindow_->ShowAndActivate();
+        if (!ShouldKeepStartupHidden()) loginWindow_->ShowAndActivate();
         return;
     }
 
@@ -154,7 +168,7 @@ void RemoteCApplicationCoordinator::ContinueAuthenticatedStartup() {
         mainWindow_->SetAccountSignedOut(
             startupAuthConfigurationError_);
         ShowMainWindowAfterStartup();
-        loginWindow_->ShowAndActivate();
+        if (!ShouldKeepStartupHidden()) loginWindow_->ShowAndActivate();
         return;
     }
 
@@ -166,6 +180,7 @@ void RemoteCApplicationCoordinator::ContinueAuthenticatedStartup() {
     for (auto& callback : callbacks) {
         callback();
     }
+    if (startupVisibilityRequested_) ShowMainWindowAfterStartup();
 }
 
 void RemoteCApplicationCoordinator::DispatchAuthCallback(
@@ -207,15 +222,35 @@ void RemoteCApplicationCoordinator::BeginStartupAuthentication() {
     // Start discovery before the heavy widget tree. The existing startup delay
     // gives Qt networking a chance to dispatch the request, without processing
     // events recursively or exposing the main UI before token validation.
+    RestoreSavedSession();
+}
+
+void RemoteCApplicationCoordinator::RestoreSavedSession() {
     authManager_->RestoreSession();
-    if (authManager_->state() == auth::AuthState::kSignedOut) {
+    if (startupAuthenticationPending_ &&
+        authManager_->state() == auth::AuthState::kSignedOut) {
         // Configure already set signed-out, so a missing store need not emit
         // another stateChanged callback.
         DispatchAuthCallback([this] { CompleteStartupSignedOut(); });
+    } else if (authenticated_ &&
+               authManager_->state() == auth::AuthState::kSignedOut) {
+        HandleAuthFailure({auth::AuthErrorCode::kStoredTokenUnavailable,
+            QStringLiteral("保存的登录凭据已不可用，请重新登录。"), false});
     }
 }
 
+void RemoteCApplicationCoordinator::StopAuthenticationRetry() {
+    authenticationRetryTimer_.stop();
+    authenticationRetryAttempt_ = 0;
+}
+
+bool RemoteCApplicationCoordinator::ShouldKeepStartupHidden() const {
+    return options_.backgroundStartup && !startupVisibilityRequested_ &&
+        (!mainWindow_ || !mainWindow_->isVisible());
+}
+
 void RemoteCApplicationCoordinator::ActivateFromExternalLaunch() {
+    startupVisibilityRequested_ = true;
     if (mainWindow_) {
         mainWindow_->ActivateFromExternalLaunch();
     } else if (loginWindow_) {
@@ -234,6 +269,9 @@ void RemoteCApplicationCoordinator::EnsureLoginWindow() {
     loginWindow_->hide();
     loginWindow_->SetLoginRequestedCallback([this] {
         if (authManager_) {
+            StopAuthenticationRetry();
+            startupAuthenticationPending_ = false;
+            if (loginStatusWindow_) loginStatusWindow_->HideAndReleaseTopmost();
             interactiveLoginRequested_ = true;
             if (mainWindow_) {
                 mainWindow_->SetAccountBusy(QStringLiteral(
@@ -243,6 +281,10 @@ void RemoteCApplicationCoordinator::EnsureLoginWindow() {
         }
     });
     loginWindow_->SetCancelRequestedCallback([this] {
+        StopAuthenticationRetry();
+        startupAuthenticationPending_ = false;
+        interactiveLoginRequested_ = false;
+        if (loginStatusWindow_) loginStatusWindow_->HideAndReleaseTopmost();
         if (authManager_) {
             authManager_->Cancel();
         }
@@ -270,10 +312,10 @@ void RemoteCApplicationCoordinator::EnsureLoginStatusWindow() {
 }
 
 void RemoteCApplicationCoordinator::ShowMainWindowAfterStartup() {
-    if (!mainWindow_) {
+    if (!mainWindow_ || ShouldKeepStartupHidden()) {
         return;
     }
-    if (!options_.startMainWindowInTray ||
+    if (startupVisibilityRequested_ || !options_.startMainWindowInTray ||
         !QSystemTrayIcon::isSystemTrayAvailable()) {
         mainWindow_->ActivateFromExternalLaunch();
         // Hiding a native topmost restore window and activating another
@@ -291,18 +333,21 @@ void RemoteCApplicationCoordinator::CompleteStartupSignedOut() {
         return;
     }
     startupAuthenticationPending_ = false;
+    StopAuthenticationRetry();
     if (loginStatusWindow_) {
         loginStatusWindow_->HideAndReleaseTopmost();
     }
     if (mainWindow_) {
-        mainWindow_->show();
-        mainWindow_->raise();
-        mainWindow_->activateWindow();
         mainWindow_->SetAccountSignedOut();
+        if (!ShouldKeepStartupHidden()) {
+            mainWindow_->show();
+            mainWindow_->raise();
+            mainWindow_->activateWindow();
+        }
     }
     EnsureLoginWindow();
     loginWindow_->ShowReady();
-    loginWindow_->ShowAndActivate();
+    if (!ShouldKeepStartupHidden()) loginWindow_->ShowAndActivate();
 }
 
 void RemoteCApplicationCoordinator::ShowAccountWindow() {
@@ -315,6 +360,10 @@ void RemoteCApplicationCoordinator::ShowAccountWindow() {
     }
     if (authenticated_) {
         loginWindow_->ShowAuthenticated(accountLabel_, accountDetail_);
+    } else if (startupAuthenticationPending_) {
+        loginWindow_->ShowBusy(
+            QStringLiteral("正在恢复登录"),
+            QStringLiteral("网络或登录服务暂不可用时会自动重试。"));
     } else if (authManager_ &&
                (authManager_->state() == auth::AuthState::kAuthorizing ||
                 authManager_->state() == auth::AuthState::kExchangingCode ||
@@ -346,7 +395,7 @@ bool RemoteCApplicationCoordinator::CreateMainWindow(
             EnsureLoginWindow();
             loginWindow_->ShowError(
                 QStringLiteral("RLink 主窗口初始化失败。"), true);
-            loginWindow_->ShowAndActivate();
+            if (!ShouldKeepStartupHidden()) loginWindow_->ShowAndActivate();
         }
         return false;
     }
@@ -373,12 +422,12 @@ bool RemoteCApplicationCoordinator::CreateMainWindow(
     if (loginWindow_) {
         loginWindow_->hide();
     }
-    if (!options_.authenticationRequired &&
+    if (!options_.authenticationRequired && !ShouldKeepStartupHidden() &&
         (!options_.startMainWindowInTray ||
          !QSystemTrayIcon::isSystemTrayAvailable())) {
         mainWindow_->show();
     }
-    if (!options_.authenticationRequired &&
+    if (!options_.authenticationRequired && !ShouldKeepStartupHidden() &&
         !options_.configurationError.isEmpty()) {
         QTimer::singleShot(0, mainWindow_.get(), [this] {
             if (!mainWindow_) {
@@ -474,6 +523,7 @@ void RemoteCApplicationCoordinator::HandleAuthenticated(
     }
     const bool completedInteractiveLogin = interactiveLoginRequested_;
     const bool completedStartupLogin = startupAuthenticationPending_;
+    StopAuthenticationRetry();
     authenticated_ = true;
     interactiveLoginRequested_ = false;
     startupAuthenticationPending_ = false;
@@ -504,15 +554,35 @@ void RemoteCApplicationCoordinator::HandleAuthenticated(
 
 void RemoteCApplicationCoordinator::HandleAuthFailure(
     const auth::AuthError& error) {
+    if (exiting_) return;
+    const bool failedInteractiveLogin = interactiveLoginRequested_;
     interactiveLoginRequested_ = false;
-    if (authenticated_ && error.transient && authManager_) {
-        QTimer::singleShot(5000, authManager_.get(), [this] {
-            if (authManager_ && authenticated_) {
-                authManager_->RefreshAccessToken();
+    if (!failedInteractiveLogin && error.transient && authManager_ &&
+        (startupAuthenticationPending_ || authenticated_)) {
+        // One cancellable timer; no synchronous wait or repeated browser login.
+        // A failed OAuth flow is in kError, so recover from the encrypted store
+        // rather than calling RefreshAccessToken (which requires kAuthenticated).
+        const int delayMs = 5000 << std::min(authenticationRetryAttempt_, 4);
+        authenticationRetryAttempt_ = std::min(authenticationRetryAttempt_ + 1, 4);
+        authenticationRetryTimer_.start(std::min(delayMs, 60000));
+        if (startupAuthenticationPending_) {
+            if (mainWindow_) mainWindow_->SetAccountBusy(
+                QStringLiteral("网络或登录服务暂不可用，正在等待重试…"));
+            EnsureLoginWindow();
+            loginWindow_->ShowBusy(
+                QStringLiteral("正在恢复登录"),
+                QStringLiteral("网络或登录服务暂不可用，将自动重试。"));
+            if (!ShouldKeepStartupHidden()) {
+                // Manual launches still provide a usable window and cancel
+                // action while the network is unavailable.
+                if (loginStatusWindow_) loginStatusWindow_->HideAndReleaseTopmost();
+                ShowMainWindowAfterStartup();
+                if (!loginWindow_->isVisible()) loginWindow_->ShowAndActivate();
             }
-        });
+        }
         return;
     }
+    StopAuthenticationRetry();
     const bool failedDuringStartup = startupAuthenticationPending_;
     startupAuthenticationPending_ = false;
     if (loginStatusWindow_) {
@@ -540,12 +610,13 @@ void RemoteCApplicationCoordinator::HandleAuthFailure(
             ? QStringLiteral("登录过程中发生未知错误。")
             : error.message,
         true);
-    if (failedDuringStartup && mainWindow_) {
+    if (failedDuringStartup && mainWindow_ && !ShouldKeepStartupHidden()) {
         mainWindow_->show();
         mainWindow_->raise();
         mainWindow_->activateWindow();
     }
-    if (failedDuringStartup || loginWindow_->isVisible()) {
+    if ((failedDuringStartup && !ShouldKeepStartupHidden()) ||
+        loginWindow_->isVisible()) {
         loginWindow_->ShowAndActivate();
     }
 }
@@ -568,6 +639,8 @@ void RemoteCApplicationCoordinator::HandleSignOut() {
         return;
     }
     QTimer::singleShot(0, this, [this] {
+        StopAuthenticationRetry();
+        startupAuthenticationPending_ = false;
         accountDeletionPending_ = false;
         authenticated_ = false;
         interactiveLoginRequested_ = false;
@@ -613,6 +686,8 @@ void RemoteCApplicationCoordinator::HandleSwitchAccount() {
         return;
     }
     QTimer::singleShot(0, this, [this] {
+        StopAuthenticationRetry();
+        startupAuthenticationPending_ = false;
         accountDeletionPending_ = false;
         authenticated_ = false;
         interactiveLoginRequested_ = false;
@@ -697,6 +772,8 @@ void RemoteCApplicationCoordinator::HandleAccountDeletionResult(
             return;
         }
         accountDeletionPending_ = false;
+        StopAuthenticationRetry();
+        startupAuthenticationPending_ = false;
         authenticated_ = false;
         interactiveLoginRequested_ = false;
         accountLabel_.clear();
@@ -740,6 +817,8 @@ void RemoteCApplicationCoordinator::HandleAccountDeletionResult(
 }
 
 void RemoteCApplicationCoordinator::ExitApplication() {
+    exiting_ = true;
+    StopAuthenticationRetry();
     deferredStartupAuthCallbacks_.clear();
     startupAuthenticationPending_ = false;
     if (authManager_) {
